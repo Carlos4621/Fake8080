@@ -16,6 +16,9 @@ public:
     // Exponer método de operaciones aritméticas
     using CPU::aritmeticOperation_8bits;
     
+    // Exponer método template de operaciones con registros
+    using CPU::ADD_ADC_SUB_SBB_CMP_R;
+    
     // Exponer el enum Operations
     using CPU::Operations;
     
