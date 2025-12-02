@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# Test ejecutable
+# Test ejecutable para Registers
 add_executable(
   registers_test
   test/RegistersTest.cpp
@@ -36,5 +36,33 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para CPU Flags
+add_executable(
+  cpu_flags_test
+  test/CPUFlagsTest.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  cpu_flags_test
+  GTest::gtest_main
+)
+
+# Test ejecutable para Arithmetic Operation
+add_executable(
+  arithmetic_operation_test
+  test/ArithmeticOperationTest.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  arithmetic_operation_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
+gtest_discover_tests(cpu_flags_test)
+gtest_discover_tests(arithmetic_operation_test)
