@@ -19,6 +19,18 @@ public:
     // Exponer método template de operaciones con registros
     using CPU::ADD_ADC_SUB_SBB_CMP_R;
     
+    // Exponer funciones de operaciones aritméticas
+    using CPU::ADD_R;
+    using CPU::ADC_R;
+    using CPU::SUB_R;
+    using CPU::SBB_R;
+    using CPU::CMP_R;
+    
+    // Exponer funciones de incremento/decremento
+    using CPU::INR_R;
+    using CPU::DCR_R;
+    using CPU::INR_DCR_R;
+    
     // Exponer el enum Operations
     using CPU::Operations;
     

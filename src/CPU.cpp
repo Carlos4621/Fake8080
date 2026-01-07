@@ -74,11 +74,15 @@ void CPU::manageAuxilaryCarryFlag(uint8_t first, uint8_t second, Operations op, 
     registers_m.setFlag(Registers::Flags::AC, isHalfCarry);
 }
 
-uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, Operations op, bool useCarry) noexcept {
+uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, Operations op, bool useCarry, bool modifyCarry) noexcept {
     const uint8_t result = first + ((second + (useCarry && registers_m.getFlag(Registers::Flags::CY))) * (op == Operations::ADD ? 1 : -1));
 
     manageAuxilaryCarryFlag(first, second, op, useCarry);
-    manageCarryFlag(first, second, op, useCarry); 
+
+    if (modifyCarry) {
+        manageCarryFlag(first, second, op, useCarry);
+    }
+
     manageZeroFlag(result);
     manageParityFlag(result);
     manageSignedFlag(result);

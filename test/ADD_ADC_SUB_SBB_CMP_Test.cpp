@@ -30,7 +30,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_B_BasicAddition) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     cpu.registers_m.setRegister(Registers::Register::B, 0x20);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::B>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x30);
     EXPECT_EQ(cycles, 4);
@@ -43,7 +43,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_C_WithOverflow) {
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setRegister(Registers::Register::C, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::C>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -57,7 +57,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_D_WithHalfCarry) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x0F);
     cpu.registers_m.setRegister(Registers::Register::D, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::D>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x10);
     EXPECT_EQ(cycles, 4);
@@ -68,7 +68,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_E_ResultNegative) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x7F);
     cpu.registers_m.setRegister(Registers::Register::E, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::E, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::E>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x80);
     EXPECT_EQ(cycles, 4);
@@ -80,7 +80,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_H_ZeroResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setRegister(Registers::Register::H, 0x00);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::H, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::H>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -92,7 +92,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_L_ParityFlag) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     cpu.registers_m.setRegister(Registers::Register::L, 0x02);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::L, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::L>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x03);
     EXPECT_EQ(cycles, 4);
@@ -102,7 +102,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_L_ParityFlag) {
 TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADD_A_DoubleValue) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::A, CPUTest::Operations::ADD, false, true>();
+    uint8_t cycles = cpu.ADD_R<Registers::Register::A>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x84);
     EXPECT_EQ(cycles, 4);
@@ -117,7 +117,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_B_WithCarryClear) {
     cpu.registers_m.setRegister(Registers::Register::B, 0x20);
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::B>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x30);
     EXPECT_EQ(cycles, 4);
@@ -128,7 +128,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_C_WithCarrySet) {
     cpu.registers_m.setRegister(Registers::Register::C, 0x20);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::C>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x31);
     EXPECT_EQ(cycles, 4);
@@ -139,7 +139,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_D_CarryCausesOverflow) {
     cpu.registers_m.setRegister(Registers::Register::D, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::D>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -152,7 +152,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_E_CarryCausesHalfCarry) {
     cpu.registers_m.setRegister(Registers::Register::E, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::E, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::E>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x10);
     EXPECT_EQ(cycles, 4);
@@ -164,7 +164,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_H_ComplexCase) {
     cpu.registers_m.setRegister(Registers::Register::H, 0x88);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::H, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::H>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x11);
     EXPECT_EQ(cycles, 4);
@@ -176,7 +176,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_L_MaxValues) {
     cpu.registers_m.setRegister(Registers::Register::L, 0xFF);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::L, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::L>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_EQ(cycles, 4);
@@ -187,7 +187,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, ADC_A_WithCarry) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x40);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::A, CPUTest::Operations::ADD, true, true>();
+    uint8_t cycles = cpu.ADC_R<Registers::Register::A>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x81);
     EXPECT_EQ(cycles, 4);
@@ -200,7 +200,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_B_BasicSubtraction) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setRegister(Registers::Register::B, 0x10);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::B>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x20);
     EXPECT_EQ(cycles, 4);
@@ -212,7 +212,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_C_ResultZero) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x50);
     cpu.registers_m.setRegister(Registers::Register::C, 0x50);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::C>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -224,7 +224,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_D_WithBorrow) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setRegister(Registers::Register::D, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::D>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_EQ(cycles, 4);
@@ -236,7 +236,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_E_WithHalfBorrow) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     cpu.registers_m.setRegister(Registers::Register::E, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::E, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::E>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x0F);
     EXPECT_EQ(cycles, 4);
@@ -247,7 +247,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_H_LargerFromSmaller) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     cpu.registers_m.setRegister(Registers::Register::H, 0x20);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::H, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::H>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xF0);
     EXPECT_EQ(cycles, 4);
@@ -259,7 +259,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_L_ParityCheck) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x05);
     cpu.registers_m.setRegister(Registers::Register::L, 0x02);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::L, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::L>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x03);
     EXPECT_EQ(cycles, 4);
@@ -269,7 +269,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_L_ParityCheck) {
 TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SUB_A_ResultZero) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::A, CPUTest::Operations::SUB, false, true>();
+    uint8_t cycles = cpu.SUB_R<Registers::Register::A>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -284,7 +284,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_B_WithCarryClear) {
     cpu.registers_m.setRegister(Registers::Register::B, 0x10);
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::B>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x20);
     EXPECT_EQ(cycles, 4);
@@ -295,7 +295,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_C_WithCarrySet) {
     cpu.registers_m.setRegister(Registers::Register::C, 0x10);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::C>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x1F);
     EXPECT_EQ(cycles, 4);
@@ -306,7 +306,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_D_CarryCausesBorrow) {
     cpu.registers_m.setRegister(Registers::Register::D, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::D>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_EQ(cycles, 4);
@@ -319,7 +319,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_E_CarryCausesHalfBorrow) {
     cpu.registers_m.setRegister(Registers::Register::E, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::E, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::E>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x0F);
     EXPECT_EQ(cycles, 4);
@@ -331,7 +331,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_H_ComplexCase) {
     cpu.registers_m.setRegister(Registers::Register::H, 0x25);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::H, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::H>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x2A);
     EXPECT_EQ(cycles, 4);
@@ -343,7 +343,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_L_EdgeCase) {
     cpu.registers_m.setRegister(Registers::Register::L, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::L, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::L>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_EQ(cycles, 4);
@@ -354,7 +354,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, SBB_A_WithCarry) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x40);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::A, CPUTest::Operations::SUB, true, true>();
+    uint8_t cycles = cpu.SBB_R<Registers::Register::A>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_EQ(cycles, 4);
@@ -368,7 +368,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_B_Equal_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x50);
     cpu.registers_m.setRegister(Registers::Register::B, 0x50);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::B>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x50); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -380,7 +380,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_C_AGreaterThanC_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setRegister(Registers::Register::C, 0x10);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::C>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x30); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -392,7 +392,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_D_ALessThanD_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     cpu.registers_m.setRegister(Registers::Register::D, 0x20);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::D>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x10); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -404,7 +404,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_E_WithZero_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     cpu.registers_m.setRegister(Registers::Register::E, 0x00);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::E, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::E>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x42); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -416,7 +416,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_H_NegativeResult_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setRegister(Registers::Register::H, 0x01);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::H, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::H>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -428,7 +428,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_L_ParityCheck_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x05);
     cpu.registers_m.setRegister(Registers::Register::L, 0x02);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::L, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::L>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x05); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -438,7 +438,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_L_ParityCheck_NoStoreResult) {
 TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_A_CompareWithItself_NoStoreResult) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x99);
     
-    uint8_t cycles = cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::A, CPUTest::Operations::SUB, false, false>();
+    uint8_t cycles = cpu.CMP_R<Registers::Register::A>();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x99); // No cambió
     EXPECT_EQ(cycles, 4);
@@ -452,7 +452,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, AllRegisters_ADD_MaxValue) {
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setRegister(Registers::Register::B, 0x01);
     
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, false, true>();
+    cpu.ADD_R<Registers::Register::B>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
@@ -461,7 +461,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, AllRegisters_SUB_MinValue) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setRegister(Registers::Register::C, 0x01);
     
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, false, true>();
+    cpu.SUB_R<Registers::Register::C>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
@@ -474,11 +474,11 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, Sequential_ADD_Then_SUB) {
     cpu.registers_m.setRegister(Registers::Register::C, 0x03);
     
     // ADD B
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, false, true>();
+    cpu.ADD_R<Registers::Register::B>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x15);
     
     // SUB C
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, false, true>();
+    cpu.SUB_R<Registers::Register::C>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x12);
 }
 
@@ -489,12 +489,12 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, Sequential_ADC_Chain) {
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
     
     // ADD B (0xFE + 0x01 = 0xFF, no carry)
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, false, true>();
+    cpu.ADD_R<Registers::Register::B>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
     // ADC C (0xFF + 0x01 + 0 = 0x00, carry set)
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::ADD, true, true>();
+    cpu.ADC_R<Registers::Register::C>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
@@ -505,12 +505,12 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, CMP_DoesNotAffectRegisters_But_AffectsFlags) {
     cpu.registers_m.setRegister(Registers::Register::C, 0x40);
     
     // CMP B (no modifica A)
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::SUB, false, false>();
+    cpu.CMP_R<Registers::Register::B>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x80);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::Z));
     
     // Ahora SUB C (modifica A)
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::C, CPUTest::Operations::SUB, false, true>();
+    cpu.SUB_R<Registers::Register::C>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x40);
 }
 
@@ -520,7 +520,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, AllFlags_ADD_Scenario) {
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setRegister(Registers::Register::B, 0x01);
     
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::B, CPUTest::Operations::ADD, false, true>();
+    cpu.ADD_R<Registers::Register::B>();
     
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::Z));   // Resultado = 0
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::P));   // Paridad par
@@ -533,7 +533,7 @@ TEST_F(ADD_ADC_SUB_SBB_CMP_Test, AllFlags_SUB_Scenario) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setRegister(Registers::Register::D, 0x01);
     
-    cpu.ADD_ADC_SUB_SBB_CMP_R<Registers::Register::D, CPUTest::Operations::SUB, false, true>();
+    cpu.SUB_R<Registers::Register::D>();
     
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::Z));  // Resultado != 0
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::P));   // 0xFF tiene paridad par

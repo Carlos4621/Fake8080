@@ -75,8 +75,22 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para INR/DCR (Increment/Decrement)
+add_executable(
+  inr_dcr_test
+  test/INR_DCR_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  inr_dcr_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
 gtest_discover_tests(arithmetic_operation_test)
 gtest_discover_tests(add_adc_sub_sbb_cmp_test)
+gtest_discover_tests(inr_dcr_test)
