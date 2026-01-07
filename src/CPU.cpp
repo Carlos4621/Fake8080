@@ -40,16 +40,16 @@ void CPU::manageSignedFlag(uint8_t value) noexcept {
     registers_m.setFlag(Registers::Flags::S, (value >> 7) == 1 ? true : false);
 }
 
-void CPU::manageCarryFlag(uint8_t first, uint8_t second, Operations op, bool useCarry) noexcept {
+void CPU::manageCarryFlag(uint8_t first, uint8_t second, AritmeticOperation op, bool useCarry) noexcept {
     bool isCarry{ false };
     const uint8_t carryValue{ useCarry && registers_m.getFlag(Registers::Flags::CY) };
     
     switch (op) {
-    case Operations::ADD:
+    case AritmeticOperation::ADD:
         isCarry = (static_cast<uint16_t>(first) + static_cast<uint16_t>(second) + carryValue) > 0xFF;
         break;
         
-    case Operations::SUB:
+    case AritmeticOperation::SUB:
         isCarry = (static_cast<uint16_t>(first) < (static_cast<uint16_t>(second) + carryValue));
         break;
     }
@@ -57,16 +57,16 @@ void CPU::manageCarryFlag(uint8_t first, uint8_t second, Operations op, bool use
     registers_m.setFlag(Registers::Flags::CY, isCarry);
 }
 
-void CPU::manageAuxilaryCarryFlag(uint8_t first, uint8_t second, Operations op, bool useCarry) noexcept {
+void CPU::manageAuxilaryCarryFlag(uint8_t first, uint8_t second, AritmeticOperation op, bool useCarry) noexcept {
     bool isHalfCarry{ false };
     const uint8_t carryValue{ useCarry && registers_m.getFlag(Registers::Flags::CY) };
     
     switch (op) {
-    case Operations::ADD:
+    case AritmeticOperation::ADD:
         isHalfCarry = ((first & 0x0F) + (second & 0x0F) + carryValue) > 0x0F;
         break;
 
-    case Operations::SUB:
+    case AritmeticOperation::SUB:
         isHalfCarry = ((first & 0x0F) < ((second & 0x0F) + carryValue));
         break;
     }
@@ -74,8 +74,8 @@ void CPU::manageAuxilaryCarryFlag(uint8_t first, uint8_t second, Operations op, 
     registers_m.setFlag(Registers::Flags::AC, isHalfCarry);
 }
 
-uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, Operations op, bool useCarry, bool modifyCarry) noexcept {
-    const uint8_t result = first + ((second + (useCarry && registers_m.getFlag(Registers::Flags::CY))) * (op == Operations::ADD ? 1 : -1));
+uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, AritmeticOperation op, bool useCarry, bool modifyCarry) noexcept {
+    const uint8_t result = first + ((second + (useCarry && registers_m.getFlag(Registers::Flags::CY))) * (op == AritmeticOperation::ADD ? 1 : -1));
 
     manageAuxilaryCarryFlag(first, second, op, useCarry);
 

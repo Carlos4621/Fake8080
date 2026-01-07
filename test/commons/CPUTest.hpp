@@ -31,8 +31,14 @@ public:
     using CPU::DCR_R;
     using CPU::INR_DCR_R;
     
-    // Exponer el enum Operations
-    using CPU::Operations;
+    // Exponer funciones de operaciones lógicas
+    using CPU::ANA_R;
+    using CPU::ORA_R;
+    using CPU::XRA_R;
+    using CPU::ANA_ORA_XRA_R;
+    
+    // Exponer el enum AritmeticOperation
+    using CPU::AritmeticOperation;
     
     // Acceso a registros para testing
     using CPU::registers_m;

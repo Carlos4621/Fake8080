@@ -88,9 +88,23 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para ANA/ORA/XRA (operaciones lógicas)
+add_executable(
+  ana_ora_xra_test
+  test/ANA_ORA_XRA_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  ana_ora_xra_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
 gtest_discover_tests(arithmetic_operation_test)
 gtest_discover_tests(add_adc_sub_sbb_cmp_test)
 gtest_discover_tests(inr_dcr_test)
+gtest_discover_tests(ana_ora_xra_test)

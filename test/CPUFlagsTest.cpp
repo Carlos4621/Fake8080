@@ -84,112 +84,112 @@ TEST_F(CPUFlagsTest, ManageSignedFlag_BitSevenIsClear_ClearsFlag) {
 // ==================== Tests para manageCarryFlag (ADD) ====================
 
 TEST_F(CPUFlagsTest, ManageCarryFlag_Add_NoOverflow_ClearsFlag) {
-    cpu.manageCarryFlag(0x10, 0x20, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0x10, 0x20, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x00, 0x00, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0x00, 0x00, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x7F, 0x7F, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0x7F, 0x7F, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
 
 TEST_F(CPUFlagsTest, ManageCarryFlag_Add_Overflow_SetsFlag) {
-    cpu.manageCarryFlag(0xFF, 0x01, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0xFF, 0x01, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0xFF, 0xFF, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0xFF, 0xFF, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x80, 0x81, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0x80, 0x81, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0xF0, 0x20, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0xF0, 0x20, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
 
 TEST_F(CPUFlagsTest, ManageCarryFlag_Add_ExactOverflow_SetsFlag) {
-    cpu.manageCarryFlag(0x80, 0x80, CPUTest::Operations::ADD); // 0x100
+    cpu.manageCarryFlag(0x80, 0x80, CPUTest::AritmeticOperation::ADD); // 0x100
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
 
 // ==================== Tests para manageCarryFlag (SUB) ====================
 
 TEST_F(CPUFlagsTest, ManageCarryFlag_Sub_NoBorrow_ClearsFlag) {
-    cpu.manageCarryFlag(0x20, 0x10, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0x20, 0x10, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0xFF, 0x00, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0xFF, 0x00, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x50, 0x50, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0x50, 0x50, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
 
 TEST_F(CPUFlagsTest, ManageCarryFlag_Sub_Borrow_SetsFlag) {
-    cpu.manageCarryFlag(0x10, 0x20, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0x10, 0x20, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x00, 0x01, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0x00, 0x01, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
     
-    cpu.manageCarryFlag(0x7F, 0x80, CPUTest::Operations::SUB);
+    cpu.manageCarryFlag(0x7F, 0x80, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
 }
 
 // ==================== Tests para manageAuxilaryCarryFlag (ADD) ====================
 
 TEST_F(CPUFlagsTest, ManageAuxilaryCarryFlag_Add_NoHalfCarry_ClearsFlag) {
-    cpu.manageAuxilaryCarryFlag(0x00, 0x00, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x00, 0x00, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x10, 0x20, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x10, 0x20, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x05, 0x09, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x05, 0x09, CPUTest::AritmeticOperation::ADD);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
 }
 
 TEST_F(CPUFlagsTest, ManageAuxilaryCarryFlag_Add_HalfCarry_SetsFlag) {
-    cpu.manageAuxilaryCarryFlag(0x0F, 0x01, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x0F, 0x01, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x0F, 0x0F, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x0F, 0x0F, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x1F, 0x01, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0x1F, 0x01, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0xAF, 0x05, CPUTest::Operations::ADD);
+    cpu.manageAuxilaryCarryFlag(0xAF, 0x05, CPUTest::AritmeticOperation::ADD);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
 }
 
 TEST_F(CPUFlagsTest, ManageAuxilaryCarryFlag_Add_ExactHalfCarry_SetsFlag) {
-    cpu.manageAuxilaryCarryFlag(0x08, 0x08, CPUTest::Operations::ADD); // nibble bajo = 0x10
+    cpu.manageAuxilaryCarryFlag(0x08, 0x08, CPUTest::AritmeticOperation::ADD); // nibble bajo = 0x10
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
 }
 
 // ==================== Tests para manageAuxilaryCarryFlag (SUB) ====================
 
 TEST_F(CPUFlagsTest, ManageAuxilaryCarryFlag_Sub_NoHalfBorrow_ClearsFlag) {
-    cpu.manageAuxilaryCarryFlag(0x20, 0x10, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0x20, 0x10, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x0F, 0x05, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0x0F, 0x05, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0xFF, 0xF0, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0xFF, 0xF0, CPUTest::AritmeticOperation::SUB);
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
 }
 
 TEST_F(CPUFlagsTest, ManageAuxilaryCarryFlag_Sub_HalfBorrow_SetsFlag) {
-    cpu.manageAuxilaryCarryFlag(0x00, 0x01, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0x00, 0x01, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x10, 0x0F, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0x10, 0x0F, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
     
-    cpu.manageAuxilaryCarryFlag(0x20, 0x01, CPUTest::Operations::SUB);
+    cpu.manageAuxilaryCarryFlag(0x20, 0x01, CPUTest::AritmeticOperation::SUB);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
 }
 
@@ -199,8 +199,8 @@ TEST_F(CPUFlagsTest, MultipleFlagsCanBeSetIndependently) {
     cpu.manageZeroFlag(0x00);
     cpu.manageParityFlag(0xFF);
     cpu.manageSignedFlag(0x80);
-    cpu.manageCarryFlag(0xFF, 0x01, CPUTest::Operations::ADD);
-    cpu.manageAuxilaryCarryFlag(0x0F, 0x01, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0xFF, 0x01, CPUTest::AritmeticOperation::ADD);
+    cpu.manageAuxilaryCarryFlag(0x0F, 0x01, CPUTest::AritmeticOperation::ADD);
     
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::Z));
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::P));
@@ -221,8 +221,8 @@ TEST_F(CPUFlagsTest, FlagsCanBeCleared) {
     cpu.manageZeroFlag(0x01);
     cpu.manageParityFlag(0x01);
     cpu.manageSignedFlag(0x00);
-    cpu.manageCarryFlag(0x10, 0x10, CPUTest::Operations::ADD);
-    cpu.manageAuxilaryCarryFlag(0x10, 0x10, CPUTest::Operations::ADD);
+    cpu.manageCarryFlag(0x10, 0x10, CPUTest::AritmeticOperation::ADD);
+    cpu.manageAuxilaryCarryFlag(0x10, 0x10, CPUTest::AritmeticOperation::ADD);
     
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::Z));
     EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::P));
