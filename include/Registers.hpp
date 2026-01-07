@@ -69,18 +69,37 @@ private:
 
     std::array<uint8_t, Register_Number> registers_m{};
 
+    /// @brief Combina dos registros en uno de 16 bits
+    /// @param high Byte alto
+    /// @param low Byte bajo
+    /// @return Valor de 16 bits combinado
     [[nodiscard]]
     uint16_t combineRegisters(Register high, Register low) const noexcept;
 
+    /// @brief Obtiene el byte alto de un número de 16 bits
+    /// @param value Valor de extracción
+    /// @return Byte alto del valor
     [[nodiscard]]
     static constexpr uint8_t getHighByte(uint16_t value) noexcept;
 
+    /// @brief Obtiene el byte bajo de un número de 16 buts
+    /// @param value Valor de extracción
+    /// @return Byte bajo del valor
     [[nodiscard]]
     static constexpr uint8_t getLowBytes(uint16_t value) noexcept;
 
+    /// @brief Obtiene un bit de una posición en específico de un número
+    /// @param value Valor de extracción
+    /// @param position Bit n a extraer
+    /// @return Valor del bit extraido
     [[nodiscard]]
     static constexpr bool getBit(uint8_t value, uint8_t position) noexcept;
 
+    /// @brief Establece un bit de una posición en específico de un número
+    /// @param value Valor de inserción
+    /// @param position Posición del bit
+    /// @param state Estado del bit a colocar
+    /// @return Valor modificado
     [[nodiscard]]
     static constexpr uint8_t setBit(uint8_t value, uint8_t position, bool state) noexcept;
 };
