@@ -131,6 +131,10 @@ private:
     template<Registers::Register R, AritmeticOperation Op>
     uint8_t INR_DCR_R();
 
+    /// @brief Superfunción para ANA, ORA y XRA con R
+    /// @tparam R Registro a usar
+    /// @tparam Op Operación lógica a usar, AND, OR o XOR
+    /// @return Número de ciclos usados
     template<Registers::Register R, LogicOperation Op>
     uint8_t ANA_ORA_XRA_R();
 };
