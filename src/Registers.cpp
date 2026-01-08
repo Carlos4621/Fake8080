@@ -36,19 +36,3 @@ void Registers::setFlag(Flags flag, bool value) noexcept {
 uint16_t Registers::combineRegisters(Register high, Register low) const noexcept {
     return static_cast<uint16_t>(getRegister(high)) << Byte_Shift | getRegister(low);
 }
-
-constexpr uint8_t Registers::getHighByte(uint16_t value) noexcept {
-    return static_cast<uint8_t>(value >> Byte_Shift);
-}
-
-constexpr uint8_t Registers::getLowBytes(uint16_t value) noexcept {
-    return static_cast<uint8_t>(value);
-}
-
-constexpr bool Registers::getBit(uint8_t value, uint8_t position) noexcept {
-    return (value >> position) & 1;
-}
-
-constexpr uint8_t Registers::setBit(uint8_t value, uint8_t position, bool state) noexcept {
-    return state ? (value | (1 << position)) : (value & ~(1 << position));
-}

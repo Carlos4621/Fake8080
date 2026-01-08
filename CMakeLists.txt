@@ -101,6 +101,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para RLC/RAL (rotaciones a la izquierda)
+add_executable(
+  rlc_ral_test
+  test/RLC_RAL_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  rlc_ral_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -108,3 +121,4 @@ gtest_discover_tests(arithmetic_operation_test)
 gtest_discover_tests(add_adc_sub_sbb_cmp_test)
 gtest_discover_tests(inr_dcr_test)
 gtest_discover_tests(ana_ora_xra_test)
+gtest_discover_tests(rlc_ral_test)
