@@ -21,6 +21,7 @@ public:
 private:
     enum class AritmeticOperation : uint8_t { ADD = 0, SUB };
     enum class LogicOperation : uint8_t { AND = 0, OR, XOR };
+    enum class ShiftDirection : uint8_t { RIGHT = 0, LEFT };
 
     using MemberFunction = uint8_t(CPU::*)();
 
@@ -115,6 +116,12 @@ private:
     template<Registers::Register R>
     uint8_t XRA_R();
 
+    template<Registers::Register R>
+    uint8_t RLC_R();
+
+    template<Registers::Register R>
+    uint8_t RAL_R();
+
     /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación a aplicar, ya sea suma o resta
@@ -137,6 +144,9 @@ private:
     /// @return Número de ciclos usados
     template<Registers::Register R, LogicOperation Op>
     uint8_t ANA_ORA_XRA_R();
+
+    template<Registers::Register R, bool useCY>
+    uint8_t RLC_RAL_R();
 };
 
 template <Registers::Register R>
@@ -187,6 +197,16 @@ inline uint8_t CPU::ORA_R() {
 template <Registers::Register R>
 inline uint8_t CPU::XRA_R() {
     return ANA_ORA_XRA_R<R, LogicOperation::XOR>();
+}
+
+template <Registers::Register R>
+inline uint8_t CPU::RLC_R() {
+    return RLC_RAL_R<R, true>();
+}
+
+template <Registers::Register R>
+inline uint8_t CPU::RAL_R() {
+    return RLC_RAL_R<R, false>();
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
@@ -242,6 +262,21 @@ inline uint8_t CPU::ANA_ORA_XRA_R() {
     registers_m.setRegister(Registers::Register::A, result);
 
     return ANA_ORA_XRA_Cycles;
+}
+
+template <Registers::Register R, bool useCY>
+inline uint8_t CPU::RLC_RAL_R() {
+    auto registerValue{ registers_m.getRegister(R) };
+    const bool dropedBit{ getBit(registerValue, 7) };
+
+    registerValue <<= 1;
+
+    registerValue = setBit(registerValue, 0, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
+
+    registers_m.setFlag(Registers::Flags::CY, dropedBit);
+    registers_m.setRegister(R, registerValue);
+
+    return RLC_RRC_RAL_RAR_Cycles;
 }
 
 #endif // !CPU_HEADER
