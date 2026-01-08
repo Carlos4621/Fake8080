@@ -52,6 +52,12 @@ public:
     // Exponer función MOV
     using CPU::MOV_R_R;
     
+    // Exponer función MVI
+    using CPU::MVI_R_d8;
+    
+    // Exponer función MOV M,R
+    using CPU::MOV_M_R;
+    
     // Exponer el enum AritmeticOperation
     using CPU::AritmeticOperation;
     

@@ -15,4 +15,8 @@ static constexpr uint8_t STC_DAA_CMA_CMC_Cycles{ 4 };
 
 static constexpr uint8_t MOV_R_R_Cycles{ 5 };
 
+static constexpr uint8_t MVI_R_d8_Cycles{ 7 };
+
+static constexpr uint8_t MOV_M_R_Cycles{ 7 };
+
 #endif // !OPCODES_CYCLES_HEADER

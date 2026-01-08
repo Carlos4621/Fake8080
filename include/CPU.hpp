@@ -139,6 +139,12 @@ private:
     template<Registers::Register Source, Registers::Register Destination>
     uint8_t MOV_R_R();
 
+    template<Registers::Register R>
+    uint8_t MVI_R_d8();
+
+    template<Registers::Register R>
+    uint8_t MOV_M_R();
+
     /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación a aplicar, ya sea suma o resta
@@ -248,9 +254,22 @@ inline uint8_t CPU::MOV_R_R() {
     return MOV_R_R_Cycles;
 }
 
+template <Registers::Register R>
+inline uint8_t CPU::MVI_R_d8() {
+    registers_m.setRegister(R, readNextByte());
+
+    return MVI_R_d8_Cycles;
+}
+
+template <Registers::Register R>
+inline uint8_t CPU::MOV_M_R() {
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = registers_m.getRegister(R);
+
+    return MOV_M_R_Cycles;
+}
+
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
-inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_R()
-{
+inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_R() {
     const auto register_A{ registers_m.getRegister(Registers::Register::A) };
     const auto register_R{ registers_m.getRegister(R) };
 

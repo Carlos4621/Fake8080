@@ -153,6 +153,32 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para MVI R, d8
+add_executable(
+  mvi_test
+  test/MVI_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  mvi_test
+  GTest::gtest_main
+)
+
+# Test ejecutable para MOV M, R
+add_executable(
+  mov_m_r_test
+  test/MOV_M_R_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  mov_m_r_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -164,3 +190,5 @@ gtest_discover_tests(rlc_ral_test)
 gtest_discover_tests(rrc_rar_test)
 gtest_discover_tests(stc_cma_cmc_daa_test)
 gtest_discover_tests(mov_test)
+gtest_discover_tests(mvi_test)
+gtest_discover_tests(mov_m_r_test)
