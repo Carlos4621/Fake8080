@@ -49,6 +49,9 @@ public:
     using CPU::CMC;
     using CPU::DAA;
     
+    // Exponer función MOV
+    using CPU::MOV_R_R;
+    
     // Exponer el enum AritmeticOperation
     using CPU::AritmeticOperation;
     
