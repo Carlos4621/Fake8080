@@ -151,11 +151,13 @@ private:
     template<Registers::Register R, LogicOperation Op>
     uint8_t ANA_ORA_XRA_R();
 
-    template<Registers::Register R, bool useCY>
-    uint8_t RLC_RAL_R();
-
-    template<Registers::Register R, bool useCY>
-    uint8_t RRC_RAR_R();
+    /// @brief Superfunción para RLC, RRC, RAL y RAR con R
+    /// @tparam R Registro a usar
+    /// @tparam direction Dirección del desplazamiento de bits
+    /// @tparam useCY Indica si se quiere colocar CY en la dirección opuesta del desplazamiento
+    /// @return Número de ciclos usados
+    template<Registers::Register R, ShiftDirection direction, bool useCY>
+    uint8_t RLC_RRC_RAL_RAR_R();
 };
 
 template <Registers::Register R>
@@ -210,22 +212,22 @@ inline uint8_t CPU::XRA_R() {
 
 template <Registers::Register R>
 inline uint8_t CPU::RLC_R() {
-    return RLC_RAL_R<R, true>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::LEFT, true>();
 }
 
 template <Registers::Register R>
 inline uint8_t CPU::RAL_R() {
-    return RLC_RAL_R<R, false>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::LEFT, false>();
 }
 
 template <Registers::Register R>
 inline uint8_t CPU::RRC_R() {
-    return RRC_RAR_R<R, true>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, true>();
 }
 
 template <Registers::Register R>
 inline uint8_t CPU::RAR_R() {
-    return RRC_RAR_R<R, false>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, false>();
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
@@ -283,29 +285,18 @@ inline uint8_t CPU::ANA_ORA_XRA_R() {
     return ANA_ORA_XRA_Cycles;
 }
 
-template <Registers::Register R, bool useCY>
-inline uint8_t CPU::RLC_RAL_R() {
+template <Registers::Register R, CPU::ShiftDirection direction, bool useCY>
+inline uint8_t CPU::RLC_RRC_RAL_RAR_R() {
     auto registerValue{ registers_m.getRegister(R) };
-    const bool dropedBit{ getBit(registerValue, 7) };
+    const bool dropedBit{ getBit(registerValue, direction == ShiftDirection::RIGHT ? 0 : 7) };
 
-    registerValue <<= 1;
-
-    registerValue = setBit(registerValue, 0, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
-
-    registers_m.setFlag(Registers::Flags::CY, dropedBit);
-    registers_m.setRegister(R, registerValue);
-
-    return RLC_RRC_RAL_RAR_Cycles;
-}
-
-template <Registers::Register R, bool useCY>
-inline uint8_t CPU::RRC_RAR_R() {
-    auto registerValue{ registers_m.getRegister(R) };
-    const bool dropedBit{ getBit(registerValue, 0) };
-
-    registerValue >>= 1;
-
-    registerValue = setBit(registerValue, 7, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
+    if constexpr (direction == ShiftDirection::RIGHT) {
+        registerValue >>= 1;
+    } else {
+        registerValue <<= 1;
+    }
+    
+    registerValue = setBit(registerValue, direction == ShiftDirection::RIGHT ? 7 : 0, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
 
     registers_m.setFlag(Registers::Flags::CY, dropedBit);
     registers_m.setRegister(R, registerValue);

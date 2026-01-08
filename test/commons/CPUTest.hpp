@@ -40,10 +40,8 @@ public:
     // Exponer funciones de rotación
     using CPU::RLC_R;
     using CPU::RAL_R;
-    using CPU::RLC_RAL_R;
     using CPU::RRC_R;
     using CPU::RAR_R;
-    using CPU::RRC_RAR_R;
     
     // Exponer el enum AritmeticOperation
     using CPU::AritmeticOperation;
