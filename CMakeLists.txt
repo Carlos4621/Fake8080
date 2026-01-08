@@ -127,6 +127,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para STC/CMA/CMC/DAA (operaciones especiales)
+add_executable(
+  stc_cma_cmc_daa_test
+  test/STC_CMA_CMC_DAA_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  stc_cma_cmc_daa_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -136,3 +149,4 @@ gtest_discover_tests(inr_dcr_test)
 gtest_discover_tests(ana_ora_xra_test)
 gtest_discover_tests(rlc_ral_test)
 gtest_discover_tests(rrc_rar_test)
+gtest_discover_tests(stc_cma_cmc_daa_test)

@@ -128,6 +128,14 @@ private:
     template<Registers::Register R>
     uint8_t RAR_R();
 
+    uint8_t STC();
+
+    uint8_t CMA();
+
+    uint8_t CMC();
+
+    uint8_t DAA();
+
     /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación a aplicar, ya sea suma o resta

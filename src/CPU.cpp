@@ -89,3 +89,50 @@ uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, AritmeticOp
 
     return result;
 }
+
+uint8_t CPU::STC() {
+    registers_m.setFlag(Registers::Flags::CY, 1);
+
+    return STC_DAA_CMA_CMC_Cycles;
+}
+
+uint8_t CPU::CMA() {
+    registers_m.setRegister(Registers::Register::A, ~registers_m.getRegister(Registers::Register::A));
+
+    return STC_DAA_CMA_CMC_Cycles;
+}
+
+uint8_t CPU::CMC() {
+    registers_m.setFlag(Registers::Flags::CY, !registers_m.getFlag(Registers::Flags::CY));
+
+    return STC_DAA_CMA_CMC_Cycles;
+}
+
+uint8_t CPU::DAA() {
+    uint8_t accumulator = registers_m.getRegister(Registers::Register::A);
+    uint8_t lowerNibble = accumulator & 0x0F;
+    uint8_t upperNibble = accumulator >> 4;
+    bool carry = registers_m.getFlag(Registers::Flags::CY);
+    bool auxCarry = registers_m.getFlag(Registers::Flags::AC);
+    
+    // Ajustar el nibble inferior
+    if (auxCarry || lowerNibble > 9) {
+        accumulator += 0x06;
+    }
+    
+    // Ajustar el nibble superior (usar el nibble superior actualizado)
+    if (carry || (accumulator >> 4) > 9) {
+        accumulator += 0x60;
+        carry = true;
+    }
+    
+    registers_m.setRegister(Registers::Register::A, accumulator);
+    registers_m.setFlag(Registers::Flags::CY, carry);
+    
+    // Actualizar flags de condición
+    manageZeroFlag(accumulator);
+    manageParityFlag(accumulator);
+    manageSignedFlag(accumulator);
+    
+    return STC_DAA_CMA_CMC_Cycles;
+}

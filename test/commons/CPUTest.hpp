@@ -43,6 +43,12 @@ public:
     using CPU::RRC_R;
     using CPU::RAR_R;
     
+    // Exponer funciones de control de flags y operaciones especiales
+    using CPU::STC;
+    using CPU::CMA;
+    using CPU::CMC;
+    using CPU::DAA;
+    
     // Exponer el enum AritmeticOperation
     using CPU::AritmeticOperation;
     
