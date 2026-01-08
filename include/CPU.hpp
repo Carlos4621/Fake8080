@@ -122,6 +122,12 @@ private:
     template<Registers::Register R>
     uint8_t RAL_R();
 
+    template<Registers::Register R>
+    uint8_t RRC_R();
+
+    template<Registers::Register R>
+    uint8_t RAR_R();
+
     /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación a aplicar, ya sea suma o resta
@@ -147,6 +153,9 @@ private:
 
     template<Registers::Register R, bool useCY>
     uint8_t RLC_RAL_R();
+
+    template<Registers::Register R, bool useCY>
+    uint8_t RRC_RAR_R();
 };
 
 template <Registers::Register R>
@@ -207,6 +216,16 @@ inline uint8_t CPU::RLC_R() {
 template <Registers::Register R>
 inline uint8_t CPU::RAL_R() {
     return RLC_RAL_R<R, false>();
+}
+
+template <Registers::Register R>
+inline uint8_t CPU::RRC_R() {
+    return RRC_RAR_R<R, true>();
+}
+
+template <Registers::Register R>
+inline uint8_t CPU::RAR_R() {
+    return RRC_RAR_R<R, false>();
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
@@ -272,6 +291,21 @@ inline uint8_t CPU::RLC_RAL_R() {
     registerValue <<= 1;
 
     registerValue = setBit(registerValue, 0, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
+
+    registers_m.setFlag(Registers::Flags::CY, dropedBit);
+    registers_m.setRegister(R, registerValue);
+
+    return RLC_RRC_RAL_RAR_Cycles;
+}
+
+template <Registers::Register R, bool useCY>
+inline uint8_t CPU::RRC_RAR_R() {
+    auto registerValue{ registers_m.getRegister(R) };
+    const bool dropedBit{ getBit(registerValue, 0) };
+
+    registerValue >>= 1;
+
+    registerValue = setBit(registerValue, 7, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
 
     registers_m.setFlag(Registers::Flags::CY, dropedBit);
     registers_m.setRegister(R, registerValue);
