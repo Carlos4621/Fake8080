@@ -27,6 +27,10 @@ void CPU::loadMtoW() {
     registers_m.setRegister(Registers::Register::W, getM());
 }
 
+void CPU::writeWtoM() {
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = registers_m.getRegister(Registers::Register::W);
+}
+
 void CPU::InvalidOpcode()
 {
     throw std::runtime_error{ "The opcode isn't implemented" };
@@ -201,4 +205,20 @@ uint8_t CPU::XRA_M() {
     XRA_R<Registers::Register::W>();
     
     return ANA_ORA_XRA_M_Cycles;
+}
+
+uint8_t CPU::INR_M() {
+    loadMtoW();
+    INR_R<Registers::Register::W>();
+    writeWtoM();
+
+    return INR_DCR_M_Cycles;
+}
+
+uint8_t CPU::DCR_M() {
+    loadMtoW();
+    DCR_R<Registers::Register::W>();
+    writeWtoM();
+
+    return INR_DCR_M_Cycles;
 }

@@ -4,8 +4,7 @@ Registers::Registers() {
     setRegister(Register::F, Initial_Flags_Register_Value);
 }
 
-uint8_t Registers::getRegister(Register reg) const noexcept
-{
+uint8_t Registers::getRegister(Register reg) const noexcept {
     return registers_m[std::to_underlying(reg)];
 }
 

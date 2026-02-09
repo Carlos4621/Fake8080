@@ -56,6 +56,9 @@ private:
     /// @brief Carga [HL] al registro W
     void loadMtoW();
 
+    /// @brief Escribe W en [HL]
+    void writeWtoM();
+
     [[noreturn]]
     void InvalidOpcode();
 
@@ -202,6 +205,10 @@ private:
     uint8_t ORA_M();
 
     uint8_t XRA_M();
+
+    uint8_t INR_M();
+
+    uint8_t DCR_M();
 };
 
 template <Registers::Register R>
@@ -323,7 +330,7 @@ inline uint8_t CPU::INR_DCR_R() {
 
     registers_m.setRegister(R, result);
 
-    return INR_DCR_Cycles;
+    return INR_DCR_R_Cycles;
 }
 
 template <Registers::Register R, CPU::LogicOperation Op>
