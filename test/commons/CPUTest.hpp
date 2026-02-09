@@ -68,6 +68,7 @@ public:
     
     // Exponer función MVI
     using CPU::MVI_R_d8;
+    using CPU::MVI_M_d8;
     
     // Exponer función MOV M,R
     using CPU::MOV_M_R;

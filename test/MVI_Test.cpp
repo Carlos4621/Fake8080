@@ -392,3 +392,255 @@ TEST_F(MVI_Test, MVI_InitializeDataPointers) {
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::H), 0x30);
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::L), 0x40);
 }
+
+// ==================== Tests para MVI M, d8 (Move Immediate to Memory) ====================
+
+TEST_F(MVI_Test, MVI_M_BasicOperation) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0x42; // Valor inmediato
+    cpu.setROM(rom);
+    
+    uint8_t cycles = cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0x42);
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(MVI_Test, MVI_M_ZeroValue) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0x00;
+    cpu.setROM(rom);
+    
+    uint8_t cycles = cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0x00);
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(MVI_Test, MVI_M_MaxValue) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0xFF;
+    cpu.setROM(rom);
+    
+    uint8_t cycles = cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0xFF);
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(MVI_Test, MVI_M_SignedNegative) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0x80; // -128 en complemento a 2
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0x80);
+}
+
+TEST_F(MVI_Test, MVI_M_BitPattern) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0b10101010;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0xAA);
+}
+
+TEST_F(MVI_Test, MVI_M_PreservesHLRegister) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0x42;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x2000);
+}
+
+TEST_F(MVI_Test, MVI_M_PreservesAllRegisters) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    cpu.registers_m.setRegister(Registers::Register::A, 0x11);
+    cpu.registers_m.setRegister(Registers::Register::B, 0x22);
+    cpu.registers_m.setRegister(Registers::Register::C, 0x33);
+    cpu.registers_m.setRegister(Registers::Register::D, 0x44);
+    cpu.registers_m.setRegister(Registers::Register::E, 0x55);
+    rom[0] = 0x99;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x11);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::B), 0x22);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::C), 0x33);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::D), 0x44);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::E), 0x55);
+}
+
+TEST_F(MVI_Test, MVI_M_PreservesAllFlags) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0] = 0x42;
+    cpu.setROM(rom);
+    
+    cpu.registers_m.setFlag(Registers::Flags::Z, true);
+    cpu.registers_m.setFlag(Registers::Flags::S, true);
+    cpu.registers_m.setFlag(Registers::Flags::P, true);
+    cpu.registers_m.setFlag(Registers::Flags::AC, true);
+    cpu.registers_m.setFlag(Registers::Flags::CY, true);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::Z));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::S));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::P));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
+}
+
+TEST_F(MVI_Test, MVI_M_OverwritesPreviousMemoryValue) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    rom[0x2000] = 0x11; // Valor previo en memoria
+    rom[0] = 0x99;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x2000], 0x99);
+}
+
+TEST_F(MVI_Test, MVI_M_AtDifferentAddresses) {
+    // Colocar dos valores en ROM[0] y ROM[1] (PC se incrementa)
+    rom[0] = 0xAA;
+    rom[1] = 0xBB;
+    cpu.setROM(rom);
+    
+    // Primera escritura en 0x1000 (lee rom[0], PC pasa a 1)
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1000);
+    cpu.MVI_M_d8();
+    EXPECT_EQ(rom[0x1000], 0xAA);
+    
+    // Segunda escritura en 0x3000 (lee rom[1], PC pasa a 2)
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x3000);
+    cpu.MVI_M_d8();
+    EXPECT_EQ(rom[0x3000], 0xBB);
+}
+
+TEST_F(MVI_Test, MVI_M_SequentialWrites) {
+    // Colocar valores en posiciones consecutivas de ROM (PC se incrementa)
+    rom[0] = 0x10;
+    rom[1] = 0x20;
+    rom[2] = 0x30;
+    cpu.setROM(rom);
+    
+    // Escribir en 0x2000 (lee rom[0], PC pasa a 1)
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
+    cpu.MVI_M_d8();
+    EXPECT_EQ(rom[0x2000], 0x10);
+    
+    // Escribir en 0x2001 (lee rom[1], PC pasa a 2)
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2001);
+    cpu.MVI_M_d8();
+    EXPECT_EQ(rom[0x2001], 0x20);
+    
+    // Escribir en 0x2002 (lee rom[2], PC pasa a 3)
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2002);
+    cpu.MVI_M_d8();
+    EXPECT_EQ(rom[0x2002], 0x30);
+}
+
+TEST_F(MVI_Test, MVI_M_HighAddress) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xFFFF);
+    rom[0] = 0x77;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0xFFFF], 0x77);
+}
+
+TEST_F(MVI_Test, MVI_M_LowAddress) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x0000);
+    rom[0] = 0x88;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0x0000], 0x88);
+}
+
+TEST_F(MVI_Test, MVI_M_InitializeArrayElements) {
+    // Simular inicialización de array en memoria
+    uint16_t baseAddress = 0x3000;
+    uint8_t values[] = {0x10, 0x20, 0x30, 0x40, 0x50};
+    
+    // Colocar valores en ROM consecutivamente (PC se incrementa con cada llamada)
+    for (int i = 0; i < 5; i++) {
+        rom[i] = values[i];
+    }
+    cpu.setROM(rom);
+    
+    for (int i = 0; i < 5; i++) {
+        cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, baseAddress + i);
+        cpu.MVI_M_d8();
+    }
+    
+    for (int i = 0; i < 5; i++) {
+        EXPECT_EQ(rom[baseAddress + i], values[i]);
+    }
+}
+
+TEST_F(MVI_Test, MVI_M_BufferInitialization) {
+    // Inicializar buffer con valor específico
+    uint16_t bufferStart = 0x4000;
+    uint8_t fillValue = 0xCC;
+    
+    // Llenar los primeros 10 bytes de ROM con el valor (PC se incrementa en cada llamada)
+    for (int i = 0; i < 10; i++) {
+        rom[i] = fillValue;
+    }
+    cpu.setROM(rom);
+    
+    for (int i = 0; i < 10; i++) {
+        cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, bufferStart + i);
+        cpu.MVI_M_d8();
+    }
+    
+    // Verificar que todas las ubicaciones tienen el valor
+    for (int i = 0; i < 10; i++) {
+        EXPECT_EQ(rom[bufferStart + i], fillValue);
+    }
+}
+
+TEST_F(MVI_Test, MVI_M_StackAreaInitialization) {
+    // Simular inicialización en área de stack
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xFFF0);
+    rom[0] = 0xDD;
+    cpu.setROM(rom);
+    
+    cpu.MVI_M_d8();
+    
+    EXPECT_EQ(rom[0xFFF0], 0xDD);
+}
+
+TEST_F(MVI_Test, MVI_M_RealisticUseCase_LookupTable) {
+    // Crear lookup table en memoria
+    uint16_t tableAddress = 0x5000;
+    uint8_t lookupTable[] = {0x00, 0x01, 0x04, 0x09, 0x10}; // Cuadrados: 0², 1², 2², 3², 4²
+    
+    // Colocar valores en ROM consecutivamente (PC se incrementa con cada llamada)
+    for (int i = 0; i < 5; i++) {
+        rom[i] = lookupTable[i];
+    }
+    cpu.setROM(rom);
+    
+    for (int i = 0; i < 5; i++) {
+        cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, tableAddress + i);
+        cpu.MVI_M_d8();
+    }
+    
+    // Verificar tabla
+    for (int i = 0; i < 5; i++) {
+        EXPECT_EQ(rom[tableAddress + i], lookupTable[i]);
+    }
+}
+

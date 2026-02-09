@@ -209,6 +209,8 @@ private:
     uint8_t INR_M();
 
     uint8_t DCR_M();
+
+    uint8_t MVI_M_d8();
 };
 
 template <Registers::Register R>

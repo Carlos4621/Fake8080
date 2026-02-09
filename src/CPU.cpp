@@ -222,3 +222,9 @@ uint8_t CPU::DCR_M() {
 
     return INR_DCR_M_Cycles;
 }
+
+uint8_t CPU::MVI_M_d8() {
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = readNextByte();
+
+    return MVI_M_d8_Cycles;
+}
