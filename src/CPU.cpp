@@ -176,7 +176,6 @@ uint8_t CPU::ANA_M() {
 
 uint8_t CPU::ORA_M() {
     return ANA_ORA_XRA_M<LogicOperation::OR>();
-
 }
 
 uint8_t CPU::XRA_M() {
@@ -211,4 +210,24 @@ uint8_t CPU::LHLD_a16() {
     registers_m.setRegister(Registers::Register::H, rom_m[address + 1]);
 
     return LHLD_Cycles;
+}
+
+uint8_t CPU::ADI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::ADD, false, true>();
+}
+
+uint8_t CPU::ACI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::ADD, true, true>();
+}
+
+uint8_t CPU::SBI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, false, true>();
+}
+
+uint8_t CPU::SCI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, true, true>();
+}
+
+uint8_t CPU::CPI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, false, false>();
 }

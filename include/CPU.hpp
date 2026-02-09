@@ -155,8 +155,8 @@ private:
     template<Registers::CombinedRegister RR, AritmeticOperation Op>
     uint8_t INX_DCX_RR();
 
-    template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
-    uint8_t ADI_ACI_SUI_SBI_CPI_R();
+    template<AritmeticOperation Op, bool useCarry, bool storeResult>
+    uint8_t ADI_ACI_SUI_SBI_CPI_d8();
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -257,6 +257,16 @@ private:
     uint8_t SHLD_a16();
 
     uint8_t LHLD_a16();
+
+    uint8_t ADI_d8();
+
+    uint8_t ACI_d8();
+
+    uint8_t SBI_d8();
+
+    uint8_t SCI_d8();
+
+    uint8_t CPI_d8();
 };
 
 template <Registers::Register R>
@@ -500,11 +510,12 @@ inline uint8_t CPU::INX_DCX_RR() {
     return INX_DCX_RR_Cycles;
 }
 
-template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
-inline uint8_t CPU::ADI_ACI_SUI_SBI_CPI_R() {
-
+template <CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
+inline uint8_t CPU::ADI_ACI_SUI_SBI_CPI_d8() {
+    registers_m.setRegister(Registers::Register::W, readNextByte());
+    ADD_ADC_SUB_SBB_CMP_R<Registers::Register::W, Op, useCarry, storeResult>();
     
-    return 0;
+    return ADI_ACI_SUI_SBI_CPI_d8_Cycles;
 }
 
 #endif // !CPU_HEADER

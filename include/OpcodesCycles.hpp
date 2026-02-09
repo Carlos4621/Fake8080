@@ -7,6 +7,8 @@ static constexpr uint8_t ADD_ADC_SUB_SBB_CMP_R_Cycles{ 4 };
 
 static constexpr uint8_t ADD_ADC_SUB_SBB_CMP_M_Cycles{ 7 };
 
+static constexpr uint8_t ADI_ACI_SUI_SBI_CPI_d8_Cycles{ 7 };
+
 static constexpr uint8_t INR_DCR_R_Cycles{ 5 };
 
 static constexpr uint8_t INR_DCR_M_Cycles{ 10 };

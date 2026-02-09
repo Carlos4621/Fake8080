@@ -46,6 +46,13 @@ public:
     using CPU::SHLD_a16;
     using CPU::LHLD_a16;
     
+    // Exponer funciones de operaciones inmediatas
+    using CPU::ADI_d8;
+    using CPU::ACI_d8;
+    using CPU::SBI_d8;
+    using CPU::SCI_d8;
+    using CPU::CPI_d8;
+    
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
     using CPU::ORA_R;
