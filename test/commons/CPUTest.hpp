@@ -44,6 +44,11 @@ public:
     using CPU::XRA_R;
     using CPU::ANA_ORA_XRA_R;
     
+    // Exponer funciones de operaciones lógicas con memoria
+    using CPU::ANA_M;
+    using CPU::ORA_M;
+    using CPU::XRA_M;
+    
     // Exponer funciones de rotación
     using CPU::RLC_R;
     using CPU::RAL_R;

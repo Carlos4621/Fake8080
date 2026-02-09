@@ -181,3 +181,24 @@ uint8_t CPU::CMP_M() {
 
     return ADD_ADC_SUB_SBB_CMP_M_Cycles;
 }
+
+uint8_t CPU::ANA_M() {
+    loadMtoW();
+    ANA_R<Registers::Register::W>();
+
+    return ANA_ORA_XRA_M_Cycles;
+}
+
+uint8_t CPU::ORA_M() {
+    loadMtoW();
+    ORA_R<Registers::Register::W>();
+
+    return ANA_ORA_XRA_M_Cycles;
+}
+
+uint8_t CPU::XRA_M() {
+    loadMtoW();
+    XRA_R<Registers::Register::W>();
+    
+    return ANA_ORA_XRA_M_Cycles;
+}

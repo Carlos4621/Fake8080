@@ -205,6 +205,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para ANA/ORA/XRA con memoria
+add_executable(
+  ana_ora_xra_m_test
+  test/ANA_ORA_XRA_M_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  ana_ora_xra_m_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -220,3 +233,4 @@ gtest_discover_tests(mvi_test)
 gtest_discover_tests(mov_m_r_test)
 gtest_discover_tests(mov_r_m_test)
 gtest_discover_tests(add_adc_sub_sbb_m_test)
+gtest_discover_tests(ana_ora_xra_m_test)

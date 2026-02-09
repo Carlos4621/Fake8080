@@ -196,6 +196,12 @@ private:
     uint8_t SBB_M();
 
     uint8_t CMP_M();
+
+    uint8_t ANA_M();
+
+    uint8_t ORA_M();
+
+    uint8_t XRA_M();
 };
 
 template <Registers::Register R>
@@ -348,7 +354,7 @@ inline uint8_t CPU::ANA_ORA_XRA_R() {
 
     registers_m.setRegister(Registers::Register::A, result);
 
-    return ANA_ORA_XRA_Cycles;
+    return ANA_ORA_XRA_R_Cycles;
 }
 
 template <Registers::Register R, CPU::ShiftDirection direction, bool useCY>
