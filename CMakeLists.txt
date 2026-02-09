@@ -257,6 +257,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para LXI (Load register pair immediate)
+add_executable(
+  lxi_test
+  test/LXI_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  lxi_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -276,3 +289,4 @@ gtest_discover_tests(ana_ora_xra_m_test)
 gtest_discover_tests(inr_dcr_m_test)
 gtest_discover_tests(inx_dcx_test)
 gtest_discover_tests(dad_test)
+gtest_discover_tests(lxi_test)

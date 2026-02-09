@@ -223,6 +223,9 @@ private:
 
     template<Registers::CombinedRegister RR>
     uint8_t DAD_RR();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t LXI_RR_d16();
 };
 
 template <Registers::Register R>
@@ -350,6 +353,13 @@ inline uint8_t CPU::DAD_RR() {
     registers_m.setCombinedRegister(Registers::CombinedRegister::HL, result);
     
     return DAD_RR_Cycles;
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::LXI_RR_d16() {
+    registers_m.setCombinedRegister(RR, readNextTwoBytes());
+
+    return LXI_Cycles;
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>

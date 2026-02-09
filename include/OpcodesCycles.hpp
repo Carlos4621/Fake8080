@@ -33,4 +33,6 @@ static constexpr uint8_t INX_DCX_RR_Cycles{ 5 };
 
 static constexpr uint8_t DAD_RR_Cycles{ 10 };
 
+static constexpr uint8_t LXI_Cycles{ 10 };
+
 #endif // !OPCODES_CYCLES_HEADER

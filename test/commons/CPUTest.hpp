@@ -42,6 +42,7 @@ public:
     using CPU::INX_RR;
     using CPU::DCX_RR;
     using CPU::DAD_RR;
+    using CPU::LXI_RR_d16;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
