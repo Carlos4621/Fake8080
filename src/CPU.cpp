@@ -236,3 +236,11 @@ uint8_t CPU::SHLD_a16() {
 
     return SHLD_Cycles;
 }
+
+uint8_t CPU::LHLD_a16() {
+    const auto address{ readNextTwoBytes() };
+    registers_m.setRegister(Registers::Register::L, rom_m[address]);
+    registers_m.setRegister(Registers::Register::H, rom_m[address + 1]);
+
+    return LHLD_Cycles;
+}

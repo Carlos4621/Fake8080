@@ -283,6 +283,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para LHLD (Load HL direct)
+add_executable(
+  lhld_test
+  test/LHLD_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  lhld_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -304,3 +317,4 @@ gtest_discover_tests(inx_dcx_test)
 gtest_discover_tests(dad_test)
 gtest_discover_tests(lxi_test)
 gtest_discover_tests(shld_test)
+gtest_discover_tests(lhld_test)

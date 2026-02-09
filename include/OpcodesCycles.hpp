@@ -37,4 +37,6 @@ static constexpr uint8_t LXI_Cycles{ 10 };
 
 static constexpr uint8_t SHLD_Cycles{ 16 };
 
+static constexpr uint8_t LHLD_Cycles{ 16 };
+
 #endif // !OPCODES_CYCLES_HEADER
