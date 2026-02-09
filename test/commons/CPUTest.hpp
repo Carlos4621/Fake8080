@@ -41,6 +41,7 @@ public:
     using CPU::DCR_M;
     using CPU::INX_RR;
     using CPU::DCX_RR;
+    using CPU::DAD_RR;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;

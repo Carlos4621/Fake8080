@@ -220,6 +220,9 @@ private:
 
     template<Registers::CombinedRegister RR>
     uint8_t DCX_RR();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t DAD_RR();
 };
 
 template <Registers::Register R>
@@ -328,6 +331,25 @@ inline uint8_t CPU::INX_RR() {
 template <Registers::CombinedRegister RR>
 inline uint8_t CPU::DCX_RR() {
     return INX_DCX_RR<RR, AritmeticOperation::SUB>();
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::DAD_RR() {
+    const auto HL_value{ registers_m.getCombinedRegister(Registers::CombinedRegister::HL) };
+    const auto RR_value{ registers_m.getCombinedRegister(RR) };
+
+    const uint16_t result = HL_value + RR_value;
+
+    if (result < HL_value) {
+        registers_m.setFlag(Registers::Flags::CY, true);
+    } 
+    else {
+        registers_m.setFlag(Registers::Flags::CY, false);
+    }
+
+    registers_m.setCombinedRegister(Registers::CombinedRegister::HL, result);
+    
+    return DAD_RR_Cycles;
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
