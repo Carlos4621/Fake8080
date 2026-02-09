@@ -228,3 +228,11 @@ uint8_t CPU::MVI_M_d8() {
 
     return MVI_M_d8_Cycles;
 }
+
+uint8_t CPU::SHLD_a16() {
+    const auto address{ readNextTwoBytes() };
+    rom_m[address] = registers_m.getRegister(Registers::Register::L);
+    rom_m[address + 1] = registers_m.getRegister(Registers::Register::H);
+
+    return SHLD_Cycles;
+}

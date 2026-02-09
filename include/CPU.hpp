@@ -226,6 +226,8 @@ private:
 
     template<Registers::CombinedRegister RR>
     uint8_t LXI_RR_d16();
+
+    uint8_t SHLD_a16();
 };
 
 template <Registers::Register R>
