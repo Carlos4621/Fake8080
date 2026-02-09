@@ -12,10 +12,10 @@ public:
     Registers();
 
     /// @brief Registros de 8 bits
-    enum class Register : uint8_t { A = 0, B, C, D, E, H, L, F, SP_high, SP_low };
+    enum class Register : uint8_t { A = 0, B, C, D, E, H, L, F, SP_high, SP_low, W, Z };
 
     /// @brief Registros de 16 bits
-    enum class CombinedRegister : uint8_t { BC = 0, DE, HL, SP };
+    enum class CombinedRegister : uint8_t { BC = 0, DE, HL, SP, WZ };
 
     /// @brief Flags
     enum class Flags : uint8_t { S = 0, Z, AC, P, CY };
@@ -55,7 +55,7 @@ public:
 
 private:
     static constexpr uint8_t Byte_Shift{ 8 };
-    static constexpr uint8_t Register_Number{ 9 };
+    static constexpr uint8_t Register_Number{ 11 };
 
     static constexpr uint8_t Initial_Flags_Register_Value{ 2 };
 
@@ -65,7 +65,8 @@ private:
         std::pair{Register::B, Register::C},
         std::pair{Register::D, Register::E},
         std::pair{Register::H, Register::L},
-        std::pair{Register::SP_high, Register::SP_low}
+        std::pair{Register::SP_high, Register::SP_low},
+        std::pair{Register::W, Register::Z}
     };
 
     std::array<uint8_t, Register_Number> registers_m{};
