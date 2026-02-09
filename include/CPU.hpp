@@ -106,6 +106,9 @@ private:
     template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
     uint8_t ADD_ADC_SUB_SBB_CMP_R();
 
+    template<AritmeticOperation Op, bool useCarry, bool storeResult>
+    uint8_t ADD_ADC_SUB_SBB_CMP_M();
+
     /// @brief Superfunción para INR y DCR con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación a aplicar, ya sea suma o resta
@@ -130,6 +133,9 @@ private:
 
     template<Registers::CombinedRegister RR, AritmeticOperation Op>
     uint8_t INX_DCX_RR();
+
+    template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
+    uint8_t ADI_ACI_SUI_SBI_CPI_R();
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -381,6 +387,14 @@ inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_R() {
     return ADD_ADC_SUB_SBB_CMP_R_Cycles;
 }
 
+template <CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
+inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_M() {
+    loadMtoW();
+    ADD_ADC_SUB_SBB_CMP_R<Registers::Register::W, Op, useCarry, storeResult>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+}
+
 template <Registers::Register R, CPU::AritmeticOperation Op>
 inline uint8_t CPU::INR_DCR_R() {
     const auto result{ aritmeticOperation_8bits(registers_m.getRegister(R), 1, Op, false, false) };
@@ -446,6 +460,13 @@ inline uint8_t CPU::INX_DCX_RR() {
     registers_m.setCombinedRegister(RR, result);
 
     return INX_DCX_RR_Cycles;
+}
+
+template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
+inline uint8_t CPU::ADI_ACI_SUI_SBI_CPI_R() {
+
+    
+    return 0;
 }
 
 #endif // !CPU_HEADER

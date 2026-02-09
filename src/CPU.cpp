@@ -151,39 +151,24 @@ uint8_t CPU::DAA() {
 }
 
 uint8_t CPU::ADD_M() {
-    loadMtoW();
-
-    ADD_R<Registers::Register::W>();
-
-    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+    return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::ADD, false, true>();
 }
 
 uint8_t CPU::SUB_M() {
-    loadMtoW();
-    SUB_R<Registers::Register::W>();
-
-    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+    return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::SUB, false, true>();
 }
 
 uint8_t CPU::ADC_M() {
-    loadMtoW();
-    ADC_R<Registers::Register::W>();
+    return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::ADD, true, true>();
 
-    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
 }
 
 uint8_t CPU::SBB_M() {
-    loadMtoW();
-    SBB_R<Registers::Register::W>();
-
-    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+    return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::SUB, true, true>();
 }
 
 uint8_t CPU::CMP_M() {
-    loadMtoW();
-    CMP_R<Registers::Register::W>();
-
-    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+    return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::SUB, false, false>();
 }
 
 uint8_t CPU::ANA_M() {
