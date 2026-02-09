@@ -106,6 +106,11 @@ private:
     template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
     uint8_t ADD_ADC_SUB_SBB_CMP_R();
 
+    /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con M
+    /// @tparam Op Operación a aplicar
+    /// @tparam useCarry Tener en cuenta la flag CY
+    /// @tparam storeResult Indica si se quiere modificar el registro con el resultado
+    /// @return Número de ciclos usados
     template<AritmeticOperation Op, bool useCarry, bool storeResult>
     uint8_t ADD_ADC_SUB_SBB_CMP_M();
 
@@ -123,6 +128,12 @@ private:
     template<Registers::Register R, LogicOperation Op>
     uint8_t ANA_ORA_XRA_R();
 
+    /// @brief Superfunción para ANA, ORA y XRA con M
+    /// @tparam Op Operación a usar
+    /// @return Número de ciclos usados
+    template<LogicOperation Op>
+    uint8_t ANA_ORA_XRA_M();
+
     /// @brief Superfunción para RLC, RRC, RAL y RAR con R
     /// @tparam R Registro a usar
     /// @tparam direction Dirección del desplazamiento de bits
@@ -131,6 +142,10 @@ private:
     template<Registers::Register R, ShiftDirection direction, bool useCY>
     uint8_t RLC_RRC_RAL_RAR_R();
 
+    /// @brief Superfunción para INX y DCX con RR
+    /// @tparam RR Conjunto de registros a usar
+    /// @tparam Op Operación a realizar
+    /// @return Número de ciclos usados
     template<Registers::CombinedRegister RR, AritmeticOperation Op>
     uint8_t INX_DCX_RR();
 
@@ -433,6 +448,14 @@ inline uint8_t CPU::ANA_ORA_XRA_R() {
     registers_m.setRegister(Registers::Register::A, result);
 
     return ANA_ORA_XRA_R_Cycles;
+}
+
+template <CPU::LogicOperation Op>
+inline uint8_t CPU::ANA_ORA_XRA_M() {
+    loadMtoW();
+    ANA_ORA_XRA_R<Registers::Register::W, Op>();
+
+    return ANA_ORA_XRA_M_Cycles;
 }
 
 template <Registers::Register R, CPU::ShiftDirection direction, bool useCY>

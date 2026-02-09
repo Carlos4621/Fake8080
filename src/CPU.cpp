@@ -160,7 +160,6 @@ uint8_t CPU::SUB_M() {
 
 uint8_t CPU::ADC_M() {
     return ADD_ADC_SUB_SBB_CMP_M<CPU::AritmeticOperation::ADD, true, true>();
-
 }
 
 uint8_t CPU::SBB_M() {
@@ -172,24 +171,16 @@ uint8_t CPU::CMP_M() {
 }
 
 uint8_t CPU::ANA_M() {
-    loadMtoW();
-    ANA_R<Registers::Register::W>();
-
-    return ANA_ORA_XRA_M_Cycles;
+    return ANA_ORA_XRA_M<LogicOperation::AND>();
 }
 
 uint8_t CPU::ORA_M() {
-    loadMtoW();
-    ORA_R<Registers::Register::W>();
+    return ANA_ORA_XRA_M<LogicOperation::OR>();
 
-    return ANA_ORA_XRA_M_Cycles;
 }
 
 uint8_t CPU::XRA_M() {
-    loadMtoW();
-    XRA_R<Registers::Register::W>();
-    
-    return ANA_ORA_XRA_M_Cycles;
+    return ANA_ORA_XRA_M<LogicOperation::XOR>();
 }
 
 uint8_t CPU::INR_M() {
