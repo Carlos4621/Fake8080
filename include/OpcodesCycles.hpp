@@ -29,4 +29,6 @@ static constexpr uint8_t MOV_R_M_Cycles{ 7 };
 
 static constexpr uint8_t MVI_M_d8_Cycles{ 10 };
 
+static constexpr uint8_t INX_DCX_RR_Cycles{ 5 };
+
 #endif // !OPCODES_CYCLES_HEADER

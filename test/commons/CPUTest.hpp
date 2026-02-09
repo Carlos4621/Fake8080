@@ -39,6 +39,8 @@ public:
     using CPU::INR_DCR_R;
     using CPU::INR_M;
     using CPU::DCR_M;
+    using CPU::INX_RR;
+    using CPU::DCX_RR;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;

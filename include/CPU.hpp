@@ -128,6 +128,9 @@ private:
     template<Registers::Register R, ShiftDirection direction, bool useCY>
     uint8_t RLC_RRC_RAL_RAR_R();
 
+    template<Registers::CombinedRegister RR, AritmeticOperation Op>
+    uint8_t INX_DCX_RR();
+
     template<Registers::Register R>
     uint8_t ADD_R();
 
@@ -211,6 +214,12 @@ private:
     uint8_t DCR_M();
 
     uint8_t MVI_M_d8();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t INX_RR();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t DCX_RR();
 };
 
 template <Registers::Register R>
@@ -311,6 +320,16 @@ inline uint8_t CPU::MOV_R_M() {
     return MOV_R_M_Cycles;
 }
 
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::INX_RR() {
+    return INX_DCX_RR<RR, AritmeticOperation::ADD>();
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::DCX_RR() {
+    return INX_DCX_RR<RR, AritmeticOperation::SUB>();
+}
+
 template <Registers::Register R, CPU::AritmeticOperation Op, bool useCarry, bool storeResult>
 inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_R() {
     const auto register_A{ registers_m.getRegister(Registers::Register::A) };
@@ -383,6 +402,14 @@ inline uint8_t CPU::RLC_RRC_RAL_RAR_R() {
     registers_m.setRegister(R, registerValue);
 
     return RLC_RRC_RAL_RAR_Cycles;
+}
+
+template <Registers::CombinedRegister RR, CPU::AritmeticOperation Op>
+inline uint8_t CPU::INX_DCX_RR() {
+    const uint16_t result = registers_m.getCombinedRegister(RR) + (Op == AritmeticOperation::ADD ? 1 : -1);
+    registers_m.setCombinedRegister(RR, result);
+
+    return INX_DCX_RR_Cycles;
 }
 
 #endif // !CPU_HEADER
