@@ -192,6 +192,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para ADD/ADC/SUB/SBB con memoria
+add_executable(
+  add_adc_sub_sbb_m_test
+  test/ADD_ADC_SUB_SBB_M_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  add_adc_sub_sbb_m_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -206,3 +219,4 @@ gtest_discover_tests(mov_test)
 gtest_discover_tests(mvi_test)
 gtest_discover_tests(mov_m_r_test)
 gtest_discover_tests(mov_r_m_test)
+gtest_discover_tests(add_adc_sub_sbb_m_test)

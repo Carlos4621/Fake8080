@@ -48,6 +48,14 @@ private:
     [[nodiscard]]
     uint16_t readNextTwoBytes();
 
+    /// @brief Devuelve el valor al que HL apunta, es decir [HL]
+    /// @return [HL]
+    [[nodiscard]]
+    uint8_t getM();
+
+    /// @brief Carga [HL] al registro W
+    void loadMtoW();
+
     [[noreturn]]
     void InvalidOpcode();
 
@@ -85,6 +93,37 @@ private:
     /// @param modifyCarry indica si CY puede ser modificado
     /// @return Resultado de la operación
     uint8_t aritmeticOperation_8bits(uint8_t first, uint8_t second, AritmeticOperation op, bool useCarry, bool modifyCarry = true) noexcept;
+
+    /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
+    /// @tparam R Registro a usar
+    /// @tparam Op Operación a aplicar, ya sea suma o resta
+    /// @tparam useCarry Tener en cuenta la flag CY
+    /// @tparam storeResult Indica si se quiere modificar el registro con el resultado
+    /// @return Número de ciclos usados
+    template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
+    uint8_t ADD_ADC_SUB_SBB_CMP_R();
+
+    /// @brief Superfunción para INR y DCR con R
+    /// @tparam R Registro a usar
+    /// @tparam Op Operación a aplicar, ya sea suma o resta
+    /// @return Número de ciclos usados
+    template<Registers::Register R, AritmeticOperation Op>
+    uint8_t INR_DCR_R();
+
+    /// @brief Superfunción para ANA, ORA y XRA con R
+    /// @tparam R Registro a usar
+    /// @tparam Op Operación lógica a usar, AND, OR o XOR
+    /// @return Número de ciclos usados
+    template<Registers::Register R, LogicOperation Op>
+    uint8_t ANA_ORA_XRA_R();
+
+    /// @brief Superfunción para RLC, RRC, RAL y RAR con R
+    /// @tparam R Registro a usar
+    /// @tparam direction Dirección del desplazamiento de bits
+    /// @tparam useCY Indica si se quiere colocar CY en la dirección opuesta del desplazamiento
+    /// @return Número de ciclos usados
+    template<Registers::Register R, ShiftDirection direction, bool useCY>
+    uint8_t RLC_RRC_RAL_RAR_R();
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -148,36 +187,15 @@ private:
     template<Registers::Register R>
     uint8_t MOV_R_M();
 
-    /// @brief Superfunción para opcodes ADD, ADC, SUB, SBB y CMP con R
-    /// @tparam R Registro a usar
-    /// @tparam Op Operación a aplicar, ya sea suma o resta
-    /// @tparam useCarry Tener en cuenta la flag CY
-    /// @tparam storeResult Indica si se quiere modificar el registro con el resultado
-    /// @return Número de ciclos usados
-    template<Registers::Register R, AritmeticOperation Op, bool useCarry, bool storeResult>
-    uint8_t ADD_ADC_SUB_SBB_CMP_R();
+    uint8_t ADD_M();
 
-    /// @brief Superfunción para INR y DCR con R
-    /// @tparam R Registro a usar
-    /// @tparam Op Operación a aplicar, ya sea suma o resta
-    /// @return Número de ciclos usados
-    template<Registers::Register R, AritmeticOperation Op>
-    uint8_t INR_DCR_R();
+    uint8_t SUB_M();
 
-    /// @brief Superfunción para ANA, ORA y XRA con R
-    /// @tparam R Registro a usar
-    /// @tparam Op Operación lógica a usar, AND, OR o XOR
-    /// @return Número de ciclos usados
-    template<Registers::Register R, LogicOperation Op>
-    uint8_t ANA_ORA_XRA_R();
+    uint8_t ADC_M();
 
-    /// @brief Superfunción para RLC, RRC, RAL y RAR con R
-    /// @tparam R Registro a usar
-    /// @tparam direction Dirección del desplazamiento de bits
-    /// @tparam useCY Indica si se quiere colocar CY en la dirección opuesta del desplazamiento
-    /// @return Número de ciclos usados
-    template<Registers::Register R, ShiftDirection direction, bool useCY>
-    uint8_t RLC_RRC_RAL_RAR_R();
+    uint8_t SBB_M();
+
+    uint8_t CMP_M();
 };
 
 template <Registers::Register R>
@@ -290,7 +308,7 @@ inline uint8_t CPU::ADD_ADC_SUB_SBB_CMP_R() {
         registers_m.setRegister(Registers::Register::A, result);
     }
 
-    return ADD_ADC_SUB_SBB_CMP_Cycles;
+    return ADD_ADC_SUB_SBB_CMP_R_Cycles;
 }
 
 template <Registers::Register R, CPU::AritmeticOperation Op>

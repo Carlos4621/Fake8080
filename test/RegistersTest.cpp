@@ -46,6 +46,16 @@ TEST_F(RegistersTest, SetAndGetRegisterL) {
     EXPECT_EQ(registers.getRegister(Registers::Register::L), 0x34);
 }
 
+TEST_F(RegistersTest, SetAndGetRegisterW) {
+    registers.setRegister(Registers::Register::W, 0x56);
+    EXPECT_EQ(registers.getRegister(Registers::Register::W), 0x56);
+}
+
+TEST_F(RegistersTest, SetAndGetRegisterZ) {
+    registers.setRegister(Registers::Register::Z, 0x78);
+    EXPECT_EQ(registers.getRegister(Registers::Register::Z), 0x78);
+}
+
 TEST_F(RegistersTest, AllRegistersIndependent) {
     registers.setRegister(Registers::Register::A, 0x01);
     registers.setRegister(Registers::Register::B, 0x02);
@@ -54,6 +64,8 @@ TEST_F(RegistersTest, AllRegistersIndependent) {
     registers.setRegister(Registers::Register::E, 0x05);
     registers.setRegister(Registers::Register::H, 0x06);
     registers.setRegister(Registers::Register::L, 0x07);
+    registers.setRegister(Registers::Register::W, 0x08);
+    registers.setRegister(Registers::Register::Z, 0x09);
 
     EXPECT_EQ(registers.getRegister(Registers::Register::A), 0x01);
     EXPECT_EQ(registers.getRegister(Registers::Register::B), 0x02);
@@ -62,6 +74,8 @@ TEST_F(RegistersTest, AllRegistersIndependent) {
     EXPECT_EQ(registers.getRegister(Registers::Register::E), 0x05);
     EXPECT_EQ(registers.getRegister(Registers::Register::H), 0x06);
     EXPECT_EQ(registers.getRegister(Registers::Register::L), 0x07);
+    EXPECT_EQ(registers.getRegister(Registers::Register::W), 0x08);
+    EXPECT_EQ(registers.getRegister(Registers::Register::Z), 0x09);
 }
 
 // Tests para registros combinados
@@ -172,6 +186,24 @@ TEST_F(RegistersTest, IndividualRegistersFormCombinedRegisterSP) {
     registers.setRegister(Registers::Register::SP_high, 0xFE);
     registers.setRegister(Registers::Register::SP_low, 0xDC);
     EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::SP), 0xFEDC);
+}
+
+// Tests para el registro WZ
+TEST_F(RegistersTest, SetAndGetCombinedRegisterWZ) {
+    registers.setCombinedRegister(Registers::CombinedRegister::WZ, 0x5678);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::WZ), 0x5678);
+}
+
+TEST_F(RegistersTest, CombinedRegisterWZSplitsCorrectly) {
+    registers.setCombinedRegister(Registers::CombinedRegister::WZ, 0x5678);
+    EXPECT_EQ(registers.getRegister(Registers::Register::W), 0x56);
+    EXPECT_EQ(registers.getRegister(Registers::Register::Z), 0x78);
+}
+
+TEST_F(RegistersTest, IndividualRegistersFormCombinedRegisterWZ) {
+    registers.setRegister(Registers::Register::W, 0x56);
+    registers.setRegister(Registers::Register::Z, 0x78);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::WZ), 0x5678);
 }
 
 // Tests para flags

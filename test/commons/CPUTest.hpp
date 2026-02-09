@@ -26,6 +26,13 @@ public:
     using CPU::SBB_R;
     using CPU::CMP_R;
     
+    // Exponer funciones de operaciones aritméticas con memoria
+    using CPU::ADD_M;
+    using CPU::ADC_M;
+    using CPU::SUB_M;
+    using CPU::SBB_M;
+    using CPU::CMP_M;
+    
     // Exponer funciones de incremento/decremento
     using CPU::INR_R;
     using CPU::DCR_R;
@@ -66,6 +73,9 @@ public:
     
     // Acceso a registros para testing
     using CPU::registers_m;
+    
+    // Acceso a ROM para testing
+    using CPU::rom_m;
 };
 
 #endif // CPU_TEST_HELPER_HPP

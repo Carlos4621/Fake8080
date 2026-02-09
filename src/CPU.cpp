@@ -19,7 +19,16 @@ uint16_t CPU::readNextTwoBytes() {
     return (static_cast<uint16_t>(highByte) << Byte_Shift | static_cast<uint16_t>(lowByte));
 }
 
-void CPU::InvalidOpcode() {
+uint8_t CPU::getM() {
+    return rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)];
+}
+
+void CPU::loadMtoW() {
+    registers_m.setRegister(Registers::Register::W, getM());
+}
+
+void CPU::InvalidOpcode()
+{
     throw std::runtime_error{ "The opcode isn't implemented" };
 }
 
@@ -135,4 +144,40 @@ uint8_t CPU::DAA() {
     manageSignedFlag(accumulator);
     
     return STC_DAA_CMA_CMC_Cycles;
+}
+
+uint8_t CPU::ADD_M() {
+    loadMtoW();
+
+    ADD_R<Registers::Register::W>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+}
+
+uint8_t CPU::SUB_M() {
+    loadMtoW();
+    SUB_R<Registers::Register::W>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+}
+
+uint8_t CPU::ADC_M() {
+    loadMtoW();
+    ADC_R<Registers::Register::W>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+}
+
+uint8_t CPU::SBB_M() {
+    loadMtoW();
+    SBB_R<Registers::Register::W>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
+}
+
+uint8_t CPU::CMP_M() {
+    loadMtoW();
+    CMP_R<Registers::Register::W>();
+
+    return ADD_ADC_SUB_SBB_CMP_M_Cycles;
 }
