@@ -184,19 +184,11 @@ uint8_t CPU::XRA_M() {
 }
 
 uint8_t CPU::INR_M() {
-    loadMtoW();
-    INR_R<Registers::Register::W>();
-    writeWtoM();
-
-    return INR_DCR_M_Cycles;
+    return INR_DCR_M<AritmeticOperation::ADD>();
 }
 
 uint8_t CPU::DCR_M() {
-    loadMtoW();
-    DCR_R<Registers::Register::W>();
-    writeWtoM();
-
-    return INR_DCR_M_Cycles;
+    return INR_DCR_M<AritmeticOperation::SUB>();
 }
 
 uint8_t CPU::MVI_M_d8() {

@@ -121,6 +121,12 @@ private:
     template<Registers::Register R, AritmeticOperation Op>
     uint8_t INR_DCR_R();
 
+    /// @brief Superfunción para INR y DCR con M
+    /// @tparam Op Operación a aplicar
+    /// @return Número de ciclos usados
+    template<AritmeticOperation Op>
+    uint8_t INR_DCR_M();
+
     /// @brief Superfunción para ANA, ORA y XRA con R
     /// @tparam R Registro a usar
     /// @tparam Op Operación lógica a usar, AND, OR o XOR
@@ -417,6 +423,15 @@ inline uint8_t CPU::INR_DCR_R() {
     registers_m.setRegister(R, result);
 
     return INR_DCR_R_Cycles;
+}
+
+template <CPU::AritmeticOperation Op>
+inline uint8_t CPU::INR_DCR_M() {
+    loadMtoW();
+    INR_DCR_R<Registers::Register::W, Op>();
+    writeWtoM();
+
+    return INR_DCR_M_Cycles;
 }
 
 template <Registers::Register R, CPU::LogicOperation Op>
