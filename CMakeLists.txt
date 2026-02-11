@@ -322,6 +322,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para STAX/STA (Store accumulator)
+add_executable(
+  stax_sta_test
+  test/STAX_STA_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  stax_sta_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -346,3 +359,4 @@ gtest_discover_tests(shld_test)
 gtest_discover_tests(lhld_test)
 gtest_discover_tests(adi_aci_sui_sbi_cpi_test)
 gtest_discover_tests(ani_ori_xri_test)
+gtest_discover_tests(stax_sta_test)

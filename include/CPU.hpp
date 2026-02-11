@@ -276,6 +276,11 @@ private:
     uint8_t ORI_d8();
 
     uint8_t XRI_d8();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t STAX_RR();
+
+    uint8_t STA_a16();
 };
 
 template <Registers::Register R>
@@ -533,6 +538,13 @@ inline uint8_t CPU::ANI_ORI_XRI_d8() {
     ANA_ORA_XRA_R<Registers::Register::W, Op>();
 
     return ANI_ORI_XRI_d8_Cycles;
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::STAX_RR() {
+    rom_m[registers_m.getCombinedRegister(RR)] = registers_m.getRegister(Registers::Register::A);
+
+    return STAX_RR_Cycles;
 }
 
 #endif // !CPU_HEADER

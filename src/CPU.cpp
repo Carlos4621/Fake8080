@@ -243,3 +243,10 @@ uint8_t CPU::ORI_d8() {
 uint8_t CPU::XRI_d8() {
     return ANI_ORI_XRI_d8<LogicOperation::XOR>();
 }
+
+uint8_t CPU::STA_a16() {
+    registers_m.setCombinedRegister(Registers::CombinedRegister::WZ, readNextTwoBytes());
+    STAX_RR<Registers::CombinedRegister::WZ>();
+
+    return STA_a16_Cycles;
+}
