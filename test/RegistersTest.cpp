@@ -306,3 +306,104 @@ TEST_F(RegistersTest, ClearingFlagDoesNotAffectOtherFlags) {
     EXPECT_FALSE(registers.getFlag(Registers::Flags::Z));
     EXPECT_TRUE(registers.getFlag(Registers::Flags::CY));
 }
+
+// Tests para el registro PSW (Program Status Word)
+TEST_F(RegistersTest, SetAndGetCombinedRegisterPSW) {
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x12D7);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x12D7);
+}
+
+TEST_F(RegistersTest, CombinedRegisterPSWSplitsCorrectly) {
+    // PSW = A (high byte) + F (low byte)
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x42D5);
+    EXPECT_EQ(registers.getRegister(Registers::Register::A), 0x42);
+    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0xD5);
+}
+
+TEST_F(RegistersTest, IndividualRegistersFormCombinedRegisterPSW) {
+    registers.setRegister(Registers::Register::A, 0xFF);
+    registers.setRegister(Registers::Register::F, 0xAA);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0xFFAA);
+}
+
+TEST_F(RegistersTest, PSWReflectsAccumulatorAndFlags) {
+    // Establecer acumulador
+    registers.setRegister(Registers::Register::A, 0x42);
+    
+    // Establecer flags: S=1, Z=1, AC=0, P=0, CY=1
+    // Binario: 11000001 con bit 1 siempre en 1 = 11000011 = 0xC3
+    registers.setFlag(Registers::Flags::S, true);
+    registers.setFlag(Registers::Flags::Z, true);
+    registers.setFlag(Registers::Flags::AC, false);
+    registers.setFlag(Registers::Flags::P, false);
+    registers.setFlag(Registers::Flags::CY, true);
+    
+    // PSW debe ser A (0x42) en byte alto, F (0xC3) en byte bajo
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x42C3);
+}
+
+TEST_F(RegistersTest, SettingPSWUpdatesAccumulatorAndFlags) {
+    // PSW = 0xABD7
+    // A = 0xAB (high byte)
+    // F = 0xD7 (low byte) = 11010111
+    // S=1 (bit 7), Z=1 (bit 6), AC=1 (bit 4), P=1 (bit 2), bit1=1, CY=1 (bit 0)
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0xABD7);
+    
+    EXPECT_EQ(registers.getRegister(Registers::Register::A), 0xAB);
+    EXPECT_TRUE(registers.getFlag(Registers::Flags::S));
+    EXPECT_TRUE(registers.getFlag(Registers::Flags::Z));
+    EXPECT_TRUE(registers.getFlag(Registers::Flags::AC));
+    EXPECT_TRUE(registers.getFlag(Registers::Flags::P));
+    EXPECT_TRUE(registers.getFlag(Registers::Flags::CY));
+}
+
+TEST_F(RegistersTest, PSWMinValue) {
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x0000);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x0000);
+    EXPECT_EQ(registers.getRegister(Registers::Register::A), 0x00);
+    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0x00);
+}
+
+TEST_F(RegistersTest, PSWMaxValue) {
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0xFFFF);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0xFFFF);
+    EXPECT_EQ(registers.getRegister(Registers::Register::A), 0xFF);
+    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0xFF);
+}
+
+TEST_F(RegistersTest, PSWDoesNotAffectOtherRegisters) {
+    registers.setRegister(Registers::Register::B, 0x11);
+    registers.setRegister(Registers::Register::C, 0x22);
+    registers.setRegister(Registers::Register::H, 0x33);
+    registers.setRegister(Registers::Register::L, 0x44);
+    
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0xABCD);
+    
+    EXPECT_EQ(registers.getRegister(Registers::Register::B), 0x11);
+    EXPECT_EQ(registers.getRegister(Registers::Register::C), 0x22);
+    EXPECT_EQ(registers.getRegister(Registers::Register::H), 0x33);
+    EXPECT_EQ(registers.getRegister(Registers::Register::L), 0x44);
+}
+
+TEST_F(RegistersTest, PSWChangingAccumulatorUpdatesHighByte) {
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x12D5);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x12D5);
+    
+    registers.setRegister(Registers::Register::A, 0xAB);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0xABD5);
+}
+
+TEST_F(RegistersTest, PSWChangingFlagsUpdatesLowByte) {
+    registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x4202);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x4202);
+    
+    // Cambiar todos los flags a 1 -> F = 0xD7
+    registers.setFlag(Registers::Flags::S, true);
+    registers.setFlag(Registers::Flags::Z, true);
+    registers.setFlag(Registers::Flags::AC, true);
+    registers.setFlag(Registers::Flags::P, true);
+    registers.setFlag(Registers::Flags::CY, true);
+    
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x42D7);
+}
+
