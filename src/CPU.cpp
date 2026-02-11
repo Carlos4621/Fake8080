@@ -231,3 +231,15 @@ uint8_t CPU::SCI_d8() {
 uint8_t CPU::CPI_d8() {
     return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, false, false>();
 }
+
+uint8_t CPU::ANI_d8() {
+    return ANI_ORI_XRI_d8<LogicOperation::AND>();
+}
+
+uint8_t CPU::ORI_d8() {
+    return ANI_ORI_XRI_d8<LogicOperation::OR>();
+}
+
+uint8_t CPU::XRI_d8() {
+    return ANI_ORI_XRI_d8<LogicOperation::XOR>();
+}

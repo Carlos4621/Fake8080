@@ -309,6 +309,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para ANI/ORI/XRI (Logical immediate operations)
+add_executable(
+  ani_ori_xri_test
+  test/ANI_ORI_XRI_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  ani_ori_xri_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -332,3 +345,4 @@ gtest_discover_tests(lxi_test)
 gtest_discover_tests(shld_test)
 gtest_discover_tests(lhld_test)
 gtest_discover_tests(adi_aci_sui_sbi_cpi_test)
+gtest_discover_tests(ani_ori_xri_test)

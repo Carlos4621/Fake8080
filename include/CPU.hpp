@@ -158,6 +158,9 @@ private:
     template<AritmeticOperation Op, bool useCarry, bool storeResult>
     uint8_t ADI_ACI_SUI_SBI_CPI_d8();
 
+    template<LogicOperation Op>
+    uint8_t ANI_ORI_XRI_d8();
+
     template<Registers::Register R>
     uint8_t ADD_R();
 
@@ -267,6 +270,12 @@ private:
     uint8_t SCI_d8();
 
     uint8_t CPI_d8();
+
+    uint8_t ANI_d8();
+
+    uint8_t ORI_d8();
+
+    uint8_t XRI_d8();
 };
 
 template <Registers::Register R>
@@ -516,6 +525,14 @@ inline uint8_t CPU::ADI_ACI_SUI_SBI_CPI_d8() {
     ADD_ADC_SUB_SBB_CMP_R<Registers::Register::W, Op, useCarry, storeResult>();
     
     return ADI_ACI_SUI_SBI_CPI_d8_Cycles;
+}
+
+template <CPU::LogicOperation Op>
+inline uint8_t CPU::ANI_ORI_XRI_d8() {
+    registers_m.setRegister(Registers::Register::W, readNextByte());
+    ANA_ORA_XRA_R<Registers::Register::W, Op>();
+
+    return ANI_ORI_XRI_d8_Cycles;
 }
 
 #endif // !CPU_HEADER

@@ -53,6 +53,11 @@ public:
     using CPU::SCI_d8;
     using CPU::CPI_d8;
     
+    // Exponer funciones de operaciones lógicas inmediatas
+    using CPU::ANI_d8;
+    using CPU::ORI_d8;
+    using CPU::XRI_d8;
+    
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
     using CPU::ORA_R;
