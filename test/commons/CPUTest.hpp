@@ -67,6 +67,8 @@ public:
     // Exponer funciones de stack
     using CPU::PUSH_RR;
     using CPU::POP_RR;
+    using CPU::XTHL;
+    using CPU::XCHG;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;

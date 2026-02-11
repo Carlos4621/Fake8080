@@ -266,3 +266,28 @@ uint8_t CPU::LDA_a16() {
 
     return LDA_a16_Cycles;
 }
+
+uint8_t CPU::XTHL() {
+    const uint16_t SP_value{ registers_m.getCombinedRegister(Registers::CombinedRegister::SP) };
+
+    uint8_t exchangeAux{ registers_m.getRegister(Registers::Register::L) };
+
+    registers_m.setRegister(Registers::Register::L, rom_m[SP_value]);
+    rom_m[SP_value] = exchangeAux;
+
+    exchangeAux = registers_m.getRegister(Registers::Register::H);
+
+    registers_m.setRegister(Registers::Register::H, rom_m[SP_value + 1]);
+    rom_m[SP_value + 1] = exchangeAux;
+
+    return XTHL_Cycles;
+}
+
+uint8_t CPU::XCHG() {
+    const auto swapAux{ registers_m.getCombinedRegister(Registers::CombinedRegister::HL) };
+
+    registers_m.setCombinedRegister(Registers::CombinedRegister::HL, registers_m.getCombinedRegister(Registers::CombinedRegister::DE));
+    registers_m.setCombinedRegister(Registers::CombinedRegister::DE, swapAux);
+
+    return XCHG_Cycles;
+}

@@ -361,6 +361,32 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para XTHL (Exchange top of stack with HL)
+add_executable(
+  xthl_test
+  test/XTHL_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  xthl_test
+  GTest::gtest_main
+)
+
+# Test ejecutable para XCHG (Exchange DE and HL)
+add_executable(
+  xchg_test
+  test/XCHG_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  xchg_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -388,3 +414,5 @@ gtest_discover_tests(ani_ori_xri_test)
 gtest_discover_tests(stax_sta_test)
 gtest_discover_tests(ldax_lda_test)
 gtest_discover_tests(push_pop_test)
+gtest_discover_tests(xthl_test)
+gtest_discover_tests(xchg_test)

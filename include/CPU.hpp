@@ -295,6 +295,10 @@ private:
 
     template<Registers::CombinedRegister RR>
     uint8_t POP_RR();
+
+    uint8_t XTHL();
+
+    uint8_t XCHG();
 };
 
 template <Registers::Register R>

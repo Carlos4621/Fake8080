@@ -55,4 +55,8 @@ static constexpr uint8_t PUSH_RR_Cycles{ 11 };
 
 static constexpr uint8_t POP_RR_Cycles{ 10 };
 
+static constexpr uint8_t XTHL_Cycles{ 18 };
+
+static constexpr uint8_t XCHG_Cycles{ 5 };
+
 #endif // !OPCODES_CYCLES_HEADER
