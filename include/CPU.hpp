@@ -35,9 +35,6 @@ private:
     uint16_t pc_m{ 0 };
     Registers registers_m;
 
-    uint8_t internalRegisterW_m{ 0 };
-    uint8_t internalRegisterZ_m{ 0 };
-
     /// @brief Lee el siguiente byte e incrementa el pc
     /// @return Byte leído
     [[nodiscard]]
@@ -47,6 +44,12 @@ private:
     /// @return Los siguientes 2 bytes en little endian
     [[nodiscard]]
     uint16_t readNextTwoBytes();
+
+    /// @brief Función de convenienciá para decrementar SP
+    void decreaseSP();
+
+    /// @brief Función de conveniencia para incrementar SP
+    void increaseSP();
 
     /// @brief Devuelve el valor al que HL apunta, es decir [HL]
     /// @return [HL]
@@ -286,6 +289,12 @@ private:
     uint8_t LDAX_RR();
 
     uint8_t LDA_a16();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t PUSH_RR();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t POP_RR();
 };
 
 template <Registers::Register R>
@@ -557,6 +566,36 @@ inline uint8_t CPU::LDAX_RR() {
     registers_m.setRegister(Registers::Register::A, rom_m[registers_m.getCombinedRegister(RR)]);
 
     return LDAX_RR_Cycles;
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::PUSH_RR() {
+    const auto RR_value{ registers_m.getCombinedRegister(RR) };
+
+    decreaseSP();
+
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] = getHighByte(RR_value);
+
+    decreaseSP();
+
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] = getLowBytes(RR_value);
+
+    return PUSH_RR_Cycles;
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::POP_RR() {
+    uint8_t lowByte{ rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] };
+
+    increaseSP();
+
+    uint8_t highByte{ rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] };
+
+    increaseSP();
+
+    registers_m.setCombinedRegister(RR, static_cast<uint16_t>(highByte << Byte_Shift) | lowByte);
+
+    return POP_RR_Cycles;
 }
 
 #endif // !CPU_HEADER

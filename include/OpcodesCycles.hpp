@@ -51,4 +51,8 @@ static constexpr uint8_t LDAX_RR_Cycles{ 7 };
 
 static constexpr uint8_t LDA_a16_Cycles{ 13 };
 
+static constexpr uint8_t PUSH_RR_Cycles{ 11 };
+
+static constexpr uint8_t POP_RR_Cycles{ 10 };
+
 #endif // !OPCODES_CYCLES_HEADER

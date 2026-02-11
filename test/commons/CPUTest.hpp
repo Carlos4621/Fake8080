@@ -64,6 +64,10 @@ public:
     using CPU::LDAX_RR;
     using CPU::LDA_a16;
     
+    // Exponer funciones de stack
+    using CPU::PUSH_RR;
+    using CPU::POP_RR;
+    
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
     using CPU::ORA_R;

@@ -2,6 +2,7 @@
 
 void CPU::setROM(std::span<uint8_t> rom) {
     rom_m = rom;
+    pc_m = 0;
 }
 
 void CPU::cycle() {
@@ -17,6 +18,14 @@ uint16_t CPU::readNextTwoBytes() {
     const auto lowByte{ readNextByte() };
     const auto highByte{ readNextByte() };
     return (static_cast<uint16_t>(highByte) << Byte_Shift | static_cast<uint16_t>(lowByte));
+}
+
+void CPU::decreaseSP() {
+    registers_m.setCombinedRegister(Registers::CombinedRegister::SP, registers_m.getCombinedRegister(Registers::CombinedRegister::SP) - 1);
+}
+
+void CPU::increaseSP() {
+    registers_m.setCombinedRegister(Registers::CombinedRegister::SP, registers_m.getCombinedRegister(Registers::CombinedRegister::SP) + 1);
 }
 
 uint8_t CPU::getM() {

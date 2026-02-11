@@ -19,6 +19,15 @@ static constexpr uint8_t getLowBytes(uint16_t value) noexcept {
     return static_cast<uint8_t>(value);
 }
 
+static constexpr uint16_t setLowByte(uint16_t value, uint8_t toSet) noexcept {
+
+    return 1; // todo
+}
+
+static constexpr uint16_t setHighByte(uint16_t value, uint8_t toSet) noexcept {
+    return 1; // todo
+}
+
 /// @brief Obtiene un bit de una posición en específico de un número
 /// @param value Valor de extracción
 /// @param position Bit n a extraer
