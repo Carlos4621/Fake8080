@@ -14,7 +14,12 @@ uint16_t Registers::getCombinedRegister(CombinedRegister reg) const noexcept {
 }
 
 void Registers::setRegister(Register reg, uint8_t value) noexcept {
-    registers_m[std::to_underlying(reg)] = value;
+    if (reg == Register::F) {
+        registers_m[std::to_underlying(reg)] = value | 0x2;
+    }
+    else {
+        registers_m[std::to_underlying(reg)] = value;
+    }
 }
 
 void Registers::setCombinedRegister(CombinedRegister reg, uint16_t value) noexcept {

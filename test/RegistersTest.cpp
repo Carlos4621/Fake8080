@@ -315,9 +315,10 @@ TEST_F(RegistersTest, SetAndGetCombinedRegisterPSW) {
 
 TEST_F(RegistersTest, CombinedRegisterPSWSplitsCorrectly) {
     // PSW = A (high byte) + F (low byte)
+    // F siempre tiene bit 1 = 1, así que 0xD5 | 0x02 = 0xD7
     registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x42D5);
     EXPECT_EQ(registers.getRegister(Registers::Register::A), 0x42);
-    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0xD5);
+    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0xD7);  // 0xD5 con bit 1 forzado a 1
 }
 
 TEST_F(RegistersTest, IndividualRegistersFormCombinedRegisterPSW) {
@@ -359,9 +360,10 @@ TEST_F(RegistersTest, SettingPSWUpdatesAccumulatorAndFlags) {
 
 TEST_F(RegistersTest, PSWMinValue) {
     registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x0000);
-    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x0000);
+    // F siempre tiene bit 1 = 1, valor mínimo es 0x0002
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x0002);
     EXPECT_EQ(registers.getRegister(Registers::Register::A), 0x00);
-    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0x00);
+    EXPECT_EQ(registers.getRegister(Registers::Register::F), 0x02);  // Bit 1 siempre en 1
 }
 
 TEST_F(RegistersTest, PSWMaxValue) {
@@ -387,10 +389,11 @@ TEST_F(RegistersTest, PSWDoesNotAffectOtherRegisters) {
 
 TEST_F(RegistersTest, PSWChangingAccumulatorUpdatesHighByte) {
     registers.setCombinedRegister(Registers::CombinedRegister::PSW, 0x12D5);
-    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x12D5);
+    // F con bit 1 forzado: 0xD5 | 0x02 = 0xD7
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0x12D7);
     
     registers.setRegister(Registers::Register::A, 0xAB);
-    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0xABD5);
+    EXPECT_EQ(registers.getCombinedRegister(Registers::CombinedRegister::PSW), 0xABD7);
 }
 
 TEST_F(RegistersTest, PSWChangingFlagsUpdatesLowByte) {

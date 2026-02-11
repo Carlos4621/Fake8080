@@ -103,6 +103,50 @@ TEST_F(PUSH_POP_Test, PUSH_HL_BasicOperation) {
     EXPECT_EQ(cycles, 11);
 }
 
+// ==================== PUSH PSW Tests ====================
+
+TEST_F(PUSH_POP_Test, PUSH_PSW_BasicOperation) {
+    // PSW combina A (high byte) con F (low byte)
+    cpu.registers_m.setRegister(Registers::Register::A, 0x42);
+    cpu.registers_m.setRegister(Registers::Register::F, 0xD7);
+    
+    uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
+    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x42);  // A (high byte)
+    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xD7);  // F (low byte)
+    EXPECT_EQ(cycles, 11);
+}
+
+TEST_F(PUSH_POP_Test, PUSH_PSW_WithFlags) {
+    // Establecer acumulador y flags
+    cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
+    cpu.registers_m.setFlag(Registers::Flags::S, true);
+    cpu.registers_m.setFlag(Registers::Flags::Z, true);
+    cpu.registers_m.setFlag(Registers::Flags::AC, false);
+    cpu.registers_m.setFlag(Registers::Flags::P, true);
+    cpu.registers_m.setFlag(Registers::Flags::CY, true);
+    
+    uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
+    EXPECT_EQ(cpu.rom_m[0xEFFF], 0xAB);  // Acumulador
+    // Flags: S=1, Z=1, AC=0, P=1, CY=1, bit1=1 -> 0xC7
+    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xC7);  // Flags
+    EXPECT_EQ(cycles, 11);
+}
+
+TEST_F(PUSH_POP_Test, PUSH_PSW_ZeroValue) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::PSW, 0x0000);
+    
+    uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
+    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x00);
+    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x02);  // F con bit 1 forzado a 1
+    EXPECT_EQ(cycles, 11);
+}
+
 // ==================== POP BC Tests ====================
 
 TEST_F(PUSH_POP_Test, POP_BC_BasicOperation) {
@@ -175,6 +219,71 @@ TEST_F(PUSH_POP_Test, POP_HL_BasicOperation) {
     EXPECT_EQ(cycles, 10);
 }
 
+// ==================== POP PSW Tests ====================
+
+TEST_F(PUSH_POP_Test, POP_PSW_BasicOperation) {
+    // Preparar datos en el stack: A=0x42, F=0xD7
+    rom[0xEFFE] = 0xD7;  // F (low byte)
+    rom[0xEFFF] = 0x42;  // A (high byte)
+    cpu.setROM(rom);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
+    
+    uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::PSW), 0x42D7);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x42);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::F), 0xD7);
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xF000);
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(PUSH_POP_Test, POP_PSW_RestoresFlags) {
+    // F = 0xC7 = 11000111 -> S=1, Z=1, AC=0, P=1, bit1=1, CY=1
+    rom[0xEFFE] = 0xC7;  // Flags
+    rom[0xEFFF] = 0xAB;  // Acumulador
+    cpu.setROM(rom);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
+    
+    uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xAB);
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::S));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::Z));
+    EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::AC));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::P));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(PUSH_POP_Test, POP_PSW_ZeroValue) {
+    rom[0xEFFE] = 0x00;
+    rom[0xEFFF] = 0x00;
+    cpu.setROM(rom);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
+    
+    uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    // F con bit 1 forzado a 1 -> PSW = 0x0002
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::PSW), 0x0002);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x00);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::F), 0x02);  // Bit 1 siempre en 1
+    EXPECT_EQ(cycles, 10);
+}
+
+TEST_F(PUSH_POP_Test, POP_PSW_MaxValue) {
+    rom[0xEFFE] = 0xFF;
+    rom[0xEFFF] = 0xFF;
+    cpu.setROM(rom);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
+    
+    uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::PSW), 0xFFFF);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFF);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::F), 0xFF);
+    EXPECT_EQ(cycles, 10);
+}
+
 // ==================== PUSH/POP Round-trip Tests ====================
 
 TEST_F(PUSH_POP_Test, PUSH_POP_BC_RoundTrip) {
@@ -213,6 +322,39 @@ TEST_F(PUSH_POP_Test, PUSH_POP_HL_RoundTrip) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), originalSP);
 }
 
+TEST_F(PUSH_POP_Test, PUSH_POP_PSW_RoundTrip) {
+    // Establecer PSW con acumulador y flags
+    cpu.registers_m.setRegister(Registers::Register::A, 0x42);
+    cpu.registers_m.setFlag(Registers::Flags::S, true);
+    cpu.registers_m.setFlag(Registers::Flags::Z, false);
+    cpu.registers_m.setFlag(Registers::Flags::AC, true);
+    cpu.registers_m.setFlag(Registers::Flags::P, false);
+    cpu.registers_m.setFlag(Registers::Flags::CY, true);
+    uint16_t originalPSW = cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::PSW);
+    uint16_t originalSP = cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP);
+    
+    cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    
+    // Cambiar PSW (acumulador y flags)
+    cpu.registers_m.setRegister(Registers::Register::A, 0x00);
+    cpu.registers_m.setFlag(Registers::Flags::S, false);
+    cpu.registers_m.setFlag(Registers::Flags::Z, false);
+    cpu.registers_m.setFlag(Registers::Flags::AC, false);
+    cpu.registers_m.setFlag(Registers::Flags::P, false);
+    cpu.registers_m.setFlag(Registers::Flags::CY, false);
+    
+    cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::PSW), originalPSW);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x42);
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::S));
+    EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::Z));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::AC));
+    EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::P));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), originalSP);
+}
+
 // ==================== Multiple PUSH Operations ====================
 
 TEST_F(PUSH_POP_Test, MultiplePUSH_StackGrowsDown) {
@@ -238,6 +380,27 @@ TEST_F(PUSH_POP_Test, MultiplePUSH_StackGrowsDown) {
     EXPECT_EQ(cpu.rom_m[0xEFFA], 0x33);  // HL low
 }
 
+TEST_F(PUSH_POP_Test, MultiplePUSH_IncludingPSW) {
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x1111);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2222);
+    cpu.registers_m.setRegister(Registers::Register::A, 0x33);
+    cpu.registers_m.setRegister(Registers::Register::F, 0x44);
+    
+    cpu.PUSH_RR<Registers::CombinedRegister::BC>();
+    cpu.PUSH_RR<Registers::CombinedRegister::HL>();
+    cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFA);
+    
+    // Verificar datos en stack
+    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x11);  // BC high
+    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x11);  // BC low
+    EXPECT_EQ(cpu.rom_m[0xEFFD], 0x22);  // HL high
+    EXPECT_EQ(cpu.rom_m[0xEFFC], 0x22);  // HL low
+    EXPECT_EQ(cpu.rom_m[0xEFFB], 0x33);  // A
+    EXPECT_EQ(cpu.rom_m[0xEFFA], 0x46);  // F (flags con bit 1=1)
+}
+
 TEST_F(PUSH_POP_Test, MultiplePOP_LIFO_Order) {
     // Preparar stack con datos
     rom[0xEFFA] = 0x33; rom[0xEFFB] = 0x33;  // HL
@@ -258,6 +421,26 @@ TEST_F(PUSH_POP_Test, MultiplePOP_LIFO_Order) {
     cpu.POP_RR<Registers::CombinedRegister::BC>();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::BC), 0x1111);
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xF000);
+}
+
+TEST_F(PUSH_POP_Test, MultiplePOP_IncludingPSW) {
+    // Preparar stack con BC, HL y PSW
+    rom[0xEFF8] = 0x44; rom[0xEFF9] = 0x33;  // PSW (F=0x44, A=0x33)
+    rom[0xEFFA] = 0x22; rom[0xEFFB] = 0x22;  // HL
+    rom[0xEFFC] = 0x11; rom[0xEFFD] = 0x11;  // BC
+    cpu.setROM(rom);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFF8);
+    
+    // Pop en orden LIFO
+    cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x33);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::F), 0x46);  // 0x44 con bit 1 forzado: 0x44 | 0x02 = 0x46
+    
+    cpu.POP_RR<Registers::CombinedRegister::HL>();
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x2222);
+    
+    cpu.POP_RR<Registers::CombinedRegister::BC>();
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::BC), 0x1111);
 }
 
 // ==================== Flag Preservation Tests ====================
@@ -332,6 +515,40 @@ TEST_F(PUSH_POP_Test, POP_DE_PreservesOtherRegisters) {
 }
 
 // ==================== Realistic Use Cases ====================
+
+TEST_F(PUSH_POP_Test, RealisticUseCase_SaveRestoreContext) {
+    // Simular guardar contexto completo incluyendo PSW
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x1234);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x5678);
+    cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
+    cpu.registers_m.setFlag(Registers::Flags::S, true);
+    cpu.registers_m.setFlag(Registers::Flags::Z, false);
+    cpu.registers_m.setFlag(Registers::Flags::CY, true);
+    
+    // Guardar contexto completo
+    cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
+    cpu.PUSH_RR<Registers::CombinedRegister::BC>();
+    cpu.PUSH_RR<Registers::CombinedRegister::HL>();
+    
+    // Simular uso de registros
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x0000);
+    cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x0000);
+    cpu.registers_m.setRegister(Registers::Register::A, 0x00);
+    cpu.registers_m.setFlag(Registers::Flags::S, false);
+    cpu.registers_m.setFlag(Registers::Flags::CY, false);
+    
+    // Restaurar contexto
+    cpu.POP_RR<Registers::CombinedRegister::HL>();
+    cpu.POP_RR<Registers::CombinedRegister::BC>();
+    cpu.POP_RR<Registers::CombinedRegister::PSW>();
+    
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::BC), 0x1234);
+    EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x5678);
+    EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xAB);
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::S));
+    EXPECT_FALSE(cpu.registers_m.getFlag(Registers::Flags::Z));
+    EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
+}
 
 TEST_F(PUSH_POP_Test, RealisticUseCase_FunctionCallSimulation) {
     // Simular guardar contexto antes de llamar a una función
