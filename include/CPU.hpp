@@ -281,6 +281,11 @@ private:
     uint8_t STAX_RR();
 
     uint8_t STA_a16();
+
+    template<Registers::CombinedRegister RR>
+    uint8_t LDAX_RR();
+
+    uint8_t LDA_a16();
 };
 
 template <Registers::Register R>
@@ -545,6 +550,13 @@ inline uint8_t CPU::STAX_RR() {
     rom_m[registers_m.getCombinedRegister(RR)] = registers_m.getRegister(Registers::Register::A);
 
     return STAX_RR_Cycles;
+}
+
+template <Registers::CombinedRegister RR>
+inline uint8_t CPU::LDAX_RR() {
+    registers_m.setRegister(Registers::Register::A, rom_m[registers_m.getCombinedRegister(RR)]);
+
+    return LDAX_RR_Cycles;
 }
 
 #endif // !CPU_HEADER

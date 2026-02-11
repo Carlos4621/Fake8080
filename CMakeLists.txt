@@ -335,6 +335,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para LDAX/LDA (Load accumulator)
+add_executable(
+  ldax_lda_test
+  test/LDAX_LDA_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  ldax_lda_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -360,3 +373,4 @@ gtest_discover_tests(lhld_test)
 gtest_discover_tests(adi_aci_sui_sbi_cpi_test)
 gtest_discover_tests(ani_ori_xri_test)
 gtest_discover_tests(stax_sta_test)
+gtest_discover_tests(ldax_lda_test)

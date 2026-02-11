@@ -250,3 +250,10 @@ uint8_t CPU::STA_a16() {
 
     return STA_a16_Cycles;
 }
+
+uint8_t CPU::LDA_a16() {
+    registers_m.setCombinedRegister(Registers::CombinedRegister::WZ, readNextTwoBytes());
+    LDAX_RR<Registers::CombinedRegister::WZ>();
+
+    return LDA_a16_Cycles;
+}

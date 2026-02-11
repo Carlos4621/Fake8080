@@ -47,4 +47,8 @@ static constexpr uint8_t STAX_RR_Cycles{ 7 };
 
 static constexpr uint8_t STA_a16_Cycles{ 13 };
 
+static constexpr uint8_t LDAX_RR_Cycles{ 7 };
+
+static constexpr uint8_t LDA_a16_Cycles{ 13 };
+
 #endif // !OPCODES_CYCLES_HEADER

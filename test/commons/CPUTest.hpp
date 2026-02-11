@@ -58,9 +58,11 @@ public:
     using CPU::ORI_d8;
     using CPU::XRI_d8;
     
-    // Exponer funciones de almacenamiento
+    // Exponer funciones de almacenamiento y carga
     using CPU::STAX_RR;
     using CPU::STA_a16;
+    using CPU::LDAX_RR;
+    using CPU::LDA_a16;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
