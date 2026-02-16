@@ -349,3 +349,9 @@ uint8_t CPU::RET() {
 
     return RET_Cycles;
 }
+
+uint8_t CPU::SPHL() {
+    registers_m.setCombinedRegister(Registers::CombinedRegister::SP, registers_m.getCombinedRegister(Registers::CombinedRegister::HL));
+
+    return SPHL_Cycles;
+}

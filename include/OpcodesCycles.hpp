@@ -65,4 +65,6 @@ static constexpr uint8_t CALL_a16_Cycles{ 17 };
 
 static constexpr uint8_t RET_Cycles{ 10 };
 
+static constexpr uint8_t SPHL_Cycles{ 5 };
+
 #endif // !OPCODES_CYCLES_HEADER

@@ -324,6 +324,8 @@ private:
     uint8_t CALL_a16();
 
     uint8_t RET();
+
+    uint8_t SPHL();
 };
 
 template <Registers::Register R>
