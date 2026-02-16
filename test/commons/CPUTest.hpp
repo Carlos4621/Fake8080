@@ -70,6 +70,7 @@ public:
     using CPU::XTHL;
     using CPU::XCHG;
     using CPU::SPHL;
+    using CPU::PCHL;
     
     // Exponer funciones de salto
     using CPU::JMP_a16;

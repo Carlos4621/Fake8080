@@ -355,3 +355,9 @@ uint8_t CPU::SPHL() {
 
     return SPHL_Cycles;
 }
+
+uint8_t CPU::PCHL() {
+    pc_m = registers_m.getCombinedRegister(Registers::CombinedRegister::HL);
+
+    return PCHL_Cycles;
+}

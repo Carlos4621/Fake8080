@@ -67,4 +67,8 @@ static constexpr uint8_t RET_Cycles{ 10 };
 
 static constexpr uint8_t SPHL_Cycles{ 5 };
 
+static constexpr uint8_t PCHL_Cycles{ 5 };
+
+static constexpr uint8_t Ignored_CALL_Cycles{ 11 };
+
 #endif // !OPCODES_CYCLES_HEADER

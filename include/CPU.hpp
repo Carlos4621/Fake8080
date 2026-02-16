@@ -8,6 +8,12 @@
 #include <limits>
 #include "OpcodesCycles.hpp"
 
+/*
+    TODO:
+        - Analizar código muerto
+        - Refactorizar funciones de saltos y llamadas condicionales
+*/
+
 class CPUTest;
 
 class CPU {
@@ -166,6 +172,9 @@ private:
 
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalJMP_a16();
+
+    template<Registers::Flags FlagToVerify, bool Negate>
+    uint8_t conditionalCall_a16();
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -326,6 +335,8 @@ private:
     uint8_t RET();
 
     uint8_t SPHL();
+
+    uint8_t PCHL();
 };
 
 template <Registers::Register R>
@@ -587,14 +598,25 @@ inline uint8_t CPU::ANI_ORI_XRI_d8() {
 
 template <Registers::Flags FlagToVerify, bool Negate>
 inline uint8_t CPU::conditionalJMP_a16() {
+    [[maybe_unused]]
+    const auto addressToJump{ readNextTwoBytes() };
+
     if (registers_m.getFlag(FlagToVerify) != Negate) {
-        JMP_a16();
-    }
-    else {
-        (void)readNextTwoBytes(); // Salto ignorado, consumiendo los dos siguientes bytes
+        pc_m = addressToJump;
     }
 
     return JMP_conditionalJUMP_a16_Cycles;
+}
+
+template <Registers::Flags FlagToVerify, bool Negate>
+inline uint8_t CPU::conditionalCall_a16() {
+    if (registers_m.getFlag(FlagToVerify) != Negate) {
+        return CALL_a16();
+    }
+
+    (void)readNextTwoBytes(); // Salto ignorado, consumiendo siguientes dos bytes
+    
+    return Ignored_CALL_Cycles;
 }
 
 template <Registers::CombinedRegister RR>

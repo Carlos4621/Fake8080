@@ -426,6 +426,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para PCHL
+add_executable(
+  pchl_test
+  test/PCHL_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  pchl_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -458,3 +471,4 @@ gtest_discover_tests(xchg_test)
 gtest_discover_tests(jmp_test)
 gtest_discover_tests(call_ret_test)
 gtest_discover_tests(sphl_test)
+gtest_discover_tests(pchl_test)
