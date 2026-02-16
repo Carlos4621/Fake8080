@@ -71,4 +71,8 @@ static constexpr uint8_t PCHL_Cycles{ 5 };
 
 static constexpr uint8_t Ignored_CALL_Cycles{ 11 };
 
+static constexpr uint8_t Taken_Conditional_RET_Cycles{ 11 };
+
+static constexpr uint8_t Ignored_RET_Cycles{ 5 };
+
 #endif // !OPCODES_CYCLES_HEADER

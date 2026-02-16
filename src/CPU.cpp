@@ -393,3 +393,35 @@ uint8_t CPU::CPO_a16() {
 uint8_t CPU::CP_a16() {
     return conditionalCall_a16<Registers::Flags::S, true>();
 }
+
+uint8_t CPU::RZ() {
+    return conditionalRet<Registers::Flags::Z, false>();
+}
+
+uint8_t CPU::RC() {
+    return conditionalRet<Registers::Flags::CY, false>();
+}
+
+uint8_t CPU::RPE() {
+    return conditionalRet<Registers::Flags::P, false>();
+}
+
+uint8_t CPU::RM() {
+    return conditionalRet<Registers::Flags::S, false>();
+}
+
+uint8_t CPU::RNZ() {
+    return conditionalRet<Registers::Flags::Z, true>();
+}
+
+uint8_t CPU::RNC() {
+    return conditionalRet<Registers::Flags::CY, true>();
+}
+
+uint8_t CPU::RPO() {
+    return conditionalRet<Registers::Flags::P, true>();
+}
+
+uint8_t CPU::RP() {
+    return conditionalRet<Registers::Flags::S, true>();
+}

@@ -11,7 +11,7 @@
 /*
     TODO:
         - Analizar código muerto
-        - Refactorizar funciones de saltos y llamadas condicionales
+        - Refactorizar funciones de saltos, llamadas condicionales y RST
 */
 
 class CPUTest;
@@ -33,6 +33,16 @@ private:
 
     static constexpr uint8_t Byte_Shift{ 8 };
     static constexpr uint16_t Opcodes_Number{ 256 };
+
+    static constexpr uint16_t RST0_Address{ 0x0 };
+    static constexpr uint16_t RST1_Address{ 0x8 };
+    static constexpr uint16_t RST2_Address{ 0x10 };
+    static constexpr uint16_t RST3_Address{ 0x18 };
+    static constexpr uint16_t RST4_Address{ 0x20 };
+    static constexpr uint16_t RST5_Address{ 0x28 };
+    static constexpr uint16_t RST6_Address{ 0x30 };
+    static constexpr uint16_t RST7_Address{ 0x38 };
+
 
     static std::array<MemberFunction, Opcodes_Number> Opcodes;
 
@@ -175,6 +185,9 @@ private:
 
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalCall_a16();
+
+    template<Registers::Flags FlagToVerify, bool Negate>
+    uint8_t conditionalRet();
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -353,6 +366,22 @@ private:
     uint8_t CPO_a16();
 
     uint8_t CP_a16();
+
+    uint8_t RZ();
+
+    uint8_t RC();
+    
+    uint8_t RPE();
+
+    uint8_t RM();
+
+    uint8_t RNZ();
+
+    uint8_t RNC();
+
+    uint8_t RPO();
+
+    uint8_t RP();
 };
 
 template <Registers::Register R>
@@ -633,6 +662,17 @@ inline uint8_t CPU::conditionalCall_a16() {
     (void)readNextTwoBytes(); // Salto ignorado, consumiendo siguientes dos bytes
     
     return Ignored_CALL_Cycles;
+}
+
+template <Registers::Flags FlagToVerify, bool Negate>
+inline uint8_t CPU::conditionalRet() {
+    if (registers_m.getFlag(FlagToVerify) != Negate) {
+        RET();
+
+        return Taken_Conditional_RET_Cycles;
+    }
+
+    return Ignored_RET_Cycles;
 }
 
 template <Registers::CombinedRegister RR>

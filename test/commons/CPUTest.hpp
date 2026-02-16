@@ -94,6 +94,14 @@ public:
     using CPU::CP_a16;
     using CPU::CPE_a16;
     using CPU::CPO_a16;
+    using CPU::RZ;
+    using CPU::RNZ;
+    using CPU::RC;
+    using CPU::RNC;
+    using CPU::RM;
+    using CPU::RP;
+    using CPU::RPE;
+    using CPU::RPO;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
