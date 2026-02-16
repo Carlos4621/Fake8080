@@ -40,6 +40,19 @@ void CPU::writeWtoM() {
     rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = registers_m.getRegister(Registers::Register::W);
 }
 
+void CPU::writeToM(uint8_t value) {
+    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = value;
+}
+
+void CPU::writeTwoBytes(uint16_t address, uint16_t value) {
+    rom_m[address] = getLowBytes(value);
+    rom_m[address + 1] = getHighByte(value);
+}
+
+uint16_t CPU::readTwoBytes(uint16_t address) const {
+    return static_cast<uint16_t>(rom_m[address + 1]) << Byte_Shift | rom_m[address];
+}
+
 void CPU::InvalidOpcode()
 {
     throw std::runtime_error{ "The opcode isn't implemented" };
@@ -59,7 +72,7 @@ void CPU::manageParityFlag(uint8_t value) noexcept {
 }
 
 void CPU::manageSignedFlag(uint8_t value) noexcept {
-    registers_m.setFlag(Registers::Flags::S, (value >> 7) == 1 ? true : false);
+    registers_m.setFlag(Registers::Flags::S, (value >> 7) != 0);
 }
 
 void CPU::manageCarryFlag(uint8_t first, uint8_t second, AritmeticOperation op, bool useCarry) noexcept {
@@ -131,18 +144,18 @@ uint8_t CPU::CMC() {
 }
 
 uint8_t CPU::DAA() {
-    uint8_t accumulator = registers_m.getRegister(Registers::Register::A);
-    uint8_t lowerNibble = accumulator & 0x0F;
-    uint8_t upperNibble = accumulator >> 4;
-    bool carry = registers_m.getFlag(Registers::Flags::CY);
-    bool auxCarry = registers_m.getFlag(Registers::Flags::AC);
+    uint8_t accumulator{ registers_m.getRegister(Registers::Register::A) };
+    bool carry{ registers_m.getFlag(Registers::Flags::CY) };
+    bool auxCarry{ registers_m.getFlag(Registers::Flags::AC) };
     
-    // Ajustar el nibble inferior
-    if (auxCarry || lowerNibble > 9) {
+    // BCD correction: Si el nibble bajo (4 bits inferiores) > 9 o hay auxiliary carry,
+    // añadir 6 para ajustar al rango BCD válido (0-9)
+    if (auxCarry || (accumulator & 0x0F) > 9) {
         accumulator += 0x06;
     }
     
-    // Ajustar el nibble superior (usar el nibble superior actualizado)
+    // BCD correction: Si el nibble alto (4 bits superiores) > 9 o hay carry,
+    // añadir 0x60 (96 decimal) para ajustar. Esto establece carry.
     if (carry || (accumulator >> 4) > 9) {
         accumulator += 0x60;
         carry = true;
@@ -200,23 +213,21 @@ uint8_t CPU::DCR_M() {
 }
 
 uint8_t CPU::MVI_M_d8() {
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = readNextByte();
+    writeToM(readNextByte());
 
     return MVI_M_d8_Cycles;
 }
 
 uint8_t CPU::SHLD_a16() {
     const auto address{ readNextTwoBytes() };
-    rom_m[address] = registers_m.getRegister(Registers::Register::L);
-    rom_m[address + 1] = registers_m.getRegister(Registers::Register::H);
+    writeTwoBytes(address, registers_m.getCombinedRegister(Registers::CombinedRegister::HL));
 
     return SHLD_Cycles;
 }
 
 uint8_t CPU::LHLD_a16() {
     const auto address{ readNextTwoBytes() };
-    registers_m.setRegister(Registers::Register::L, rom_m[address]);
-    registers_m.setRegister(Registers::Register::H, rom_m[address + 1]);
+    registers_m.setCombinedRegister(Registers::CombinedRegister::HL, readTwoBytes(address));
 
     return LHLD_Cycles;
 }
@@ -230,10 +241,6 @@ uint8_t CPU::ACI_d8() {
 }
 
 uint8_t CPU::SBI_d8() {
-    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, false, true>();
-}
-
-uint8_t CPU::SCI_d8() {
     return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, true, true>();
 }
 
@@ -269,17 +276,12 @@ uint8_t CPU::LDA_a16() {
 
 uint8_t CPU::XTHL() {
     const uint16_t SP_value{ registers_m.getCombinedRegister(Registers::CombinedRegister::SP) };
-
-    uint8_t exchangeAux{ registers_m.getRegister(Registers::Register::L) };
-
-    registers_m.setRegister(Registers::Register::L, rom_m[SP_value]);
-    rom_m[SP_value] = exchangeAux;
-
-    exchangeAux = registers_m.getRegister(Registers::Register::H);
-
-    registers_m.setRegister(Registers::Register::H, rom_m[SP_value + 1]);
-    rom_m[SP_value + 1] = exchangeAux;
-
+    const uint16_t HL_value{ registers_m.getCombinedRegister(Registers::CombinedRegister::HL) };
+    const uint16_t stack_value{ readTwoBytes(SP_value) };
+    
+    writeTwoBytes(SP_value, HL_value);
+    registers_m.setCombinedRegister(Registers::CombinedRegister::HL, stack_value);
+    
     return XTHL_Cycles;
 }
 

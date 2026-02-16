@@ -220,7 +220,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionNoBorrow) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
     
-    uint8_t cycles = cpu.SCI_d8();
+    uint8_t cycles = cpu.SBI_d8();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x20);
     EXPECT_EQ(cycles, 7);
@@ -233,7 +233,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionWithBorrow) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    cpu.SCI_d8();
+    cpu.SBI_d8();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x1F);
 }
@@ -245,7 +245,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BorrowPropagation) {
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
     
-    cpu.SCI_d8();
+    cpu.SBI_d8();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xFE);
     EXPECT_TRUE(cpu.registers_m.getFlag(Registers::Flags::CY));
@@ -328,7 +328,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, Sequential_PCIncrement) {
     cpu.SBI_d8(); // A = 0x12
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x12);
     
-    cpu.SCI_d8(); // A = 0x10
+    cpu.SBI_d8(); // A = 0x10
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x10);
     
     cpu.CPI_d8(); // A = 0x10 (sin cambios)
@@ -493,7 +493,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_ChainedBorrow) {
     cpu.SBI_d8(); // A = 0xFF, CY = 1
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
-    cpu.SCI_d8(); // A = 0x0E (0x10 - 0x01 - 1)
+    cpu.SBI_d8(); // A = 0x0E (0x10 - 0x01 - 1)
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x0E);
 }

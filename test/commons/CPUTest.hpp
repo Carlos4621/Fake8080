@@ -50,7 +50,6 @@ public:
     using CPU::ADI_d8;
     using CPU::ACI_d8;
     using CPU::SBI_d8;
-    using CPU::SCI_d8;
     using CPU::CPI_d8;
     
     // Exponer funciones de operaciones lógicas inmediatas

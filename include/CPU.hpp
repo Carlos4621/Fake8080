@@ -8,12 +8,6 @@
 #include <limits>
 #include "OpcodesCycles.hpp"
 
-/*
-    TODO:
-        - Analizar código muerto
-        - Refactorizar funciones de saltos, llamadas condicionales y RST
-*/
-
 class CPUTest;
 
 class CPU {
@@ -77,6 +71,21 @@ private:
 
     /// @brief Escribe W en [HL]
     void writeWtoM();
+
+    /// @brief Escribe un byte directamente en [HL]
+    /// @param value Byte a escribir
+    void writeToM(uint8_t value);
+
+    /// @brief Escribe un valor de 16 bits en memoria (formato little-endian)
+    /// @param address Dirección base
+    /// @param value Valor a escribir
+    void writeTwoBytes(uint16_t address, uint16_t value);
+
+    /// @brief Lee un valor de 16 bits desde memoria (formato little-endian)
+    /// @param address Dirección base
+    /// @return Valor leído
+    [[nodiscard]]
+    uint16_t readTwoBytes(uint16_t address) const;
 
     [[noreturn]]
     void InvalidOpcode();
@@ -159,12 +168,12 @@ private:
     template<LogicOperation Op>
     uint8_t ANA_ORA_XRA_M();
 
-    /// @brief Superfunción para RLC, RRC, RAL y RAR con R
-    /// @tparam R Registro a usar
-    /// @tparam direction Dirección del desplazamiento de bits
-    /// @tparam useCY Indica si se quiere colocar CY en la dirección opuesta del desplazamiento
-    /// @return Número de ciclos usados
-    template<Registers::Register R, ShiftDirection direction, bool useCY>
+    /// @brief Superfunction for RLC, RRC, RAL and RAR with R
+    /// @tparam R Register to use
+    /// @tparam direction Direction of bit shift
+    /// @tparam rotateThrough If true, rotates through CY flag (RAL/RAR); if false, circular rotation (RLC/RRC)
+    /// @return Number of cycles used
+    template<Registers::Register R, ShiftDirection direction, bool rotateThrough>
     uint8_t RLC_RRC_RAL_RAR_R();
 
     /// @brief Superfunción para INX y DCX con RR
@@ -294,8 +303,6 @@ private:
     uint8_t ACI_d8();
 
     uint8_t SBI_d8();
-
-    uint8_t SCI_d8();
 
     uint8_t CPI_d8();
 
@@ -436,22 +443,22 @@ inline uint8_t CPU::XRA_R() {
 
 template <Registers::Register R>
 inline uint8_t CPU::RLC_R() {
-    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::LEFT, true>();
-}
-
-template <Registers::Register R>
-inline uint8_t CPU::RAL_R() {
     return RLC_RRC_RAL_RAR_R<R, ShiftDirection::LEFT, false>();
 }
 
 template <Registers::Register R>
+inline uint8_t CPU::RAL_R() {
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::LEFT, true>();
+}
+
+template <Registers::Register R>
 inline uint8_t CPU::RRC_R() {
-    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, true>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, false>();
 }
 
 template <Registers::Register R>
 inline uint8_t CPU::RAR_R() {
-    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, false>();
+    return RLC_RRC_RAL_RAR_R<R, ShiftDirection::RIGHT, true>();
 }
 
 template <Registers::Register Source, Registers::Register Destination>
@@ -470,7 +477,7 @@ inline uint8_t CPU::MVI_R_d8() {
 
 template <Registers::Register R>
 inline uint8_t CPU::MOV_M_R() {
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = registers_m.getRegister(R);
+    writeToM(registers_m.getRegister(R));
 
     return MOV_M_R_Cycles;
 }
@@ -598,20 +605,30 @@ inline uint8_t CPU::ANA_ORA_XRA_M() {
     return ANA_ORA_XRA_M_Cycles;
 }
 
-template <Registers::Register R, CPU::ShiftDirection direction, bool useCY>
+template <Registers::Register R, CPU::ShiftDirection direction, bool rotateThrough>
 inline uint8_t CPU::RLC_RRC_RAL_RAR_R() {
     auto registerValue{ registers_m.getRegister(R) };
-    const bool dropedBit{ getBit(registerValue, direction == ShiftDirection::RIGHT ? 0 : 7) };
-
+    
+    // Identificar qué bit se "expulsa" del registro
+    constexpr uint8_t exitBitPosition = (direction == ShiftDirection::RIGHT) ? 0 : 7;
+    constexpr uint8_t entryBitPosition = (direction == ShiftDirection::RIGHT) ? 7 : 0;
+    
+    const bool exitBit{ getBit(registerValue, exitBitPosition) };
+    
+    // Realizar el shift
     if constexpr (direction == ShiftDirection::RIGHT) {
         registerValue >>= 1;
     } else {
         registerValue <<= 1;
     }
     
-    registerValue = setBit(registerValue, direction == ShiftDirection::RIGHT ? 7 : 0, useCY ? dropedBit : registers_m.getFlag(Registers::Flags::CY));
+    // Determinar qué bit entra:
+    // - Si rotateThrough=false (RLC/RRC): usa el bit expulsado
+    // - Si rotateThrough=true (RAL/RAR): usa la flag CY
+    const bool entryBit{ rotateThrough ? registers_m.getFlag(Registers::Flags::CY) : exitBit };
+    registerValue = setBit(registerValue, entryBitPosition, entryBit);
 
-    registers_m.setFlag(Registers::Flags::CY, dropedBit);
+    registers_m.setFlag(Registers::Flags::CY, exitBit);
     registers_m.setRegister(R, registerValue);
 
     return RLC_RRC_RAL_RAR_Cycles;
