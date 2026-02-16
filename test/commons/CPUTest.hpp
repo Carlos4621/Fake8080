@@ -81,6 +81,10 @@ public:
     using CPU::JPE_a16;
     using CPU::JPO_a16;
     
+    // Exponer funciones de llamada y retorno
+    using CPU::CALL_a16;
+    using CPU::RET;
+    
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
     using CPU::ORA_R;

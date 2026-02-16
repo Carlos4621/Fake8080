@@ -320,6 +320,10 @@ private:
     uint8_t JNC_a16();
 
     uint8_t JNZ_a16();
+
+    uint8_t CALL_a16();
+
+    uint8_t RET();
 };
 
 template <Registers::Register R>

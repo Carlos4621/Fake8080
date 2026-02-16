@@ -329,3 +329,23 @@ uint8_t CPU::JNC_a16() {
 uint8_t CPU::JNZ_a16() {
     return conditionalJMP_a16<Registers::Flags::Z, true>();
 }
+
+uint8_t CPU::CALL_a16() {
+    const auto addressToCall{ readNextTwoBytes() };
+
+    registers_m.setCombinedRegister(Registers::CombinedRegister::WZ, pc_m);
+
+    PUSH_RR<Registers::CombinedRegister::WZ>();
+
+    pc_m = addressToCall;
+
+    return CALL_a16_Cycles;
+}
+
+uint8_t CPU::RET() {
+    POP_RR<Registers::CombinedRegister::WZ>();
+
+    pc_m = registers_m.getCombinedRegister(Registers::CombinedRegister::WZ);
+
+    return RET_Cycles;
+}

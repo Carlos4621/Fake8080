@@ -400,6 +400,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para CALL a16 y RET
+add_executable(
+  call_ret_test
+  test/CALL_RET_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  call_ret_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -430,3 +443,4 @@ gtest_discover_tests(push_pop_test)
 gtest_discover_tests(xthl_test)
 gtest_discover_tests(xchg_test)
 gtest_discover_tests(jmp_test)
+gtest_discover_tests(call_ret_test)

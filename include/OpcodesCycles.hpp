@@ -61,4 +61,8 @@ static constexpr uint8_t XCHG_Cycles{ 5 };
 
 static constexpr uint8_t JMP_conditionalJUMP_a16_Cycles{ 10 };
 
+static constexpr uint8_t CALL_a16_Cycles{ 17 };
+
+static constexpr uint8_t RET_Cycles{ 10 };
+
 #endif // !OPCODES_CYCLES_HEADER
