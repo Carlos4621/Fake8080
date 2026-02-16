@@ -164,6 +164,9 @@ private:
     template<LogicOperation Op>
     uint8_t ANI_ORI_XRI_d8();
 
+    template<Registers::Flags FlagToVerify, bool Negate>
+    uint8_t conditionalJMP_a16();
+
     template<Registers::Register R>
     uint8_t ADD_R();
 
@@ -299,6 +302,24 @@ private:
     uint8_t XTHL();
 
     uint8_t XCHG();
+
+    uint8_t JMP_a16();
+
+    uint8_t JM_a16();
+
+    uint8_t JZ_a16();
+
+    uint8_t JC_a16();
+
+    uint8_t JPE_a16();
+
+    uint8_t JP_a16();
+
+    uint8_t JPO_a16();
+
+    uint8_t JNC_a16();
+
+    uint8_t JNZ_a16();
 };
 
 template <Registers::Register R>
@@ -556,6 +577,18 @@ inline uint8_t CPU::ANI_ORI_XRI_d8() {
     ANA_ORA_XRA_R<Registers::Register::W, Op>();
 
     return ANI_ORI_XRI_d8_Cycles;
+}
+
+template <Registers::Flags FlagToVerify, bool Negate>
+inline uint8_t CPU::conditionalJMP_a16() {
+    if (registers_m.getFlag(FlagToVerify) != Negate) {
+        JMP_a16();
+    }
+    else {
+        (void)readNextTwoBytes(); // Salto ignorado, consumiendo los dos siguientes bytes
+    }
+
+    return JMP_conditionalJUMP_a16_Cycles;
 }
 
 template <Registers::CombinedRegister RR>

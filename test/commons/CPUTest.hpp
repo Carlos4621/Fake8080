@@ -70,6 +70,17 @@ public:
     using CPU::XTHL;
     using CPU::XCHG;
     
+    // Exponer funciones de salto
+    using CPU::JMP_a16;
+    using CPU::JZ_a16;
+    using CPU::JNZ_a16;
+    using CPU::JC_a16;
+    using CPU::JNC_a16;
+    using CPU::JP_a16;
+    using CPU::JM_a16;
+    using CPU::JPE_a16;
+    using CPU::JPO_a16;
+    
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;
     using CPU::ORA_R;
@@ -114,6 +125,9 @@ public:
     
     // Acceso a ROM para testing
     using CPU::rom_m;
+    
+    // Acceso a PC para testing
+    using CPU::pc_m;
 };
 
 #endif // CPU_TEST_HELPER_HPP

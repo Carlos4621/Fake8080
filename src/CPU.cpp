@@ -291,3 +291,41 @@ uint8_t CPU::XCHG() {
 
     return XCHG_Cycles;
 }
+
+uint8_t CPU::JMP_a16() {
+    pc_m = readNextTwoBytes();
+
+    return JMP_conditionalJUMP_a16_Cycles;
+}
+
+uint8_t CPU::JM_a16() {
+    return conditionalJMP_a16<Registers::Flags::S, false>();
+}
+
+uint8_t CPU::JZ_a16() {
+    return conditionalJMP_a16<Registers::Flags::Z, false>();
+}
+
+uint8_t CPU::JC_a16() {
+    return conditionalJMP_a16<Registers::Flags::CY, false>();
+}
+
+uint8_t CPU::JPE_a16() {
+    return conditionalJMP_a16<Registers::Flags::P, false>();
+}
+
+uint8_t CPU::JP_a16() {
+    return conditionalJMP_a16<Registers::Flags::S, true>();
+}
+
+uint8_t CPU::JPO_a16() {
+    return conditionalJMP_a16<Registers::Flags::P, true>();
+}
+
+uint8_t CPU::JNC_a16() {
+    return conditionalJMP_a16<Registers::Flags::CY, true>();
+}
+
+uint8_t CPU::JNZ_a16() {
+    return conditionalJMP_a16<Registers::Flags::Z, true>();
+}
