@@ -86,6 +86,14 @@ public:
     // Exponer funciones de llamada y retorno
     using CPU::CALL_a16;
     using CPU::RET;
+    using CPU::CZ_a16;
+    using CPU::CNZ_a16;
+    using CPU::CC_a16;
+    using CPU::CNC_a16;
+    using CPU::CM_a16;
+    using CPU::CP_a16;
+    using CPU::CPE_a16;
+    using CPU::CPO_a16;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;

@@ -361,3 +361,35 @@ uint8_t CPU::PCHL() {
 
     return PCHL_Cycles;
 }
+
+uint8_t CPU::CZ_a16() {
+    return conditionalCall_a16<Registers::Flags::Z, false>();
+}
+
+uint8_t CPU::CC_a16() {
+    return conditionalCall_a16<Registers::Flags::CY, false>();
+}
+
+uint8_t CPU::CPE_a16() {
+    return conditionalCall_a16<Registers::Flags::P, false>();
+}
+
+uint8_t CPU::CM_a16() {
+    return conditionalCall_a16<Registers::Flags::S, false>();
+}
+
+uint8_t CPU::CNZ_a16() {
+    return conditionalCall_a16<Registers::Flags::Z, true>();
+}
+
+uint8_t CPU::CNC_a16() {
+    return conditionalCall_a16<Registers::Flags::CY, true>();
+}
+
+uint8_t CPU::CPO_a16() {
+    return conditionalCall_a16<Registers::Flags::P, true>();
+}
+
+uint8_t CPU::CP_a16() {
+    return conditionalCall_a16<Registers::Flags::S, true>();
+}

@@ -337,6 +337,22 @@ private:
     uint8_t SPHL();
 
     uint8_t PCHL();
+
+    uint8_t CZ_a16();
+
+    uint8_t CC_a16();
+
+    uint8_t CPE_a16();
+
+    uint8_t CM_a16();
+
+    uint8_t CNZ_a16();
+
+    uint8_t CNC_a16();
+
+    uint8_t CPO_a16();
+
+    uint8_t CP_a16();
 };
 
 template <Registers::Register R>
