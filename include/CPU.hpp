@@ -28,16 +28,6 @@ private:
     static constexpr uint8_t Byte_Shift{ 8 };
     static constexpr uint16_t Opcodes_Number{ 256 };
 
-    static constexpr uint16_t RST0_Address{ 0x0 };
-    static constexpr uint16_t RST1_Address{ 0x8 };
-    static constexpr uint16_t RST2_Address{ 0x10 };
-    static constexpr uint16_t RST3_Address{ 0x18 };
-    static constexpr uint16_t RST4_Address{ 0x20 };
-    static constexpr uint16_t RST5_Address{ 0x28 };
-    static constexpr uint16_t RST6_Address{ 0x30 };
-    static constexpr uint16_t RST7_Address{ 0x38 };
-
-
     static std::array<MemberFunction, Opcodes_Number> Opcodes;
 
     std::span<uint8_t> rom_m;
@@ -218,6 +208,8 @@ private:
     /// @return Número de ciclos usados
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalRet();
+
+    void callAddress(uint16_t address);
 
     template<Registers::Register R>
     uint8_t ADD_R();
@@ -410,6 +402,10 @@ private:
     uint8_t RPO();
 
     uint8_t RP();
+
+    template<uint8_t RstVector>
+        requires (RstVector <= 7)
+    uint8_t RST_N();
 };
 
 template <Registers::Register R>
@@ -755,6 +751,14 @@ inline uint8_t CPU::POP_RR() {
     registers_m.setCombinedRegister(RR, static_cast<uint16_t>(highByte << Byte_Shift) | lowByte);
 
     return POP_RR_Cycles;
+}
+
+template <uint8_t RstVector>
+    requires (RstVector <= 7)
+inline uint8_t CPU::RST_N() {
+    callAddress(Byte_Shift * RstVector);
+
+    return RST_Cycles;
 }
 
 #endif // !CPU_HEADER

@@ -101,6 +101,9 @@ public:
     using CPU::RP;
     using CPU::RPE;
     using CPU::RPO;
+
+    // Exponer funciones RST
+    using CPU::RST_N;
     
     // Exponer funciones de operaciones lógicas
     using CPU::ANA_R;

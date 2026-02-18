@@ -413,6 +413,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para RST_N
+add_executable(
+  rst_test
+  test/RST_Test.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  rst_test
+  GTest::gtest_main
+)
+
 # Test ejecutable para SPHL
 add_executable(
   sphl_test
@@ -496,6 +509,7 @@ gtest_discover_tests(xthl_test)
 gtest_discover_tests(xchg_test)
 gtest_discover_tests(jmp_test)
 gtest_discover_tests(call_ret_test)
+gtest_discover_tests(rst_test)
 gtest_discover_tests(sphl_test)
 gtest_discover_tests(pchl_test)
 gtest_discover_tests(conditional_call_test)

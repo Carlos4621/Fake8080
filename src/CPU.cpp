@@ -125,6 +125,16 @@ uint8_t CPU::aritmeticOperation_8bits(uint8_t first, uint8_t second, AritmeticOp
     return result;
 }
 
+void CPU::callAddress(uint16_t address) {
+    const auto addressToCall{ address };
+
+    registers_m.setCombinedRegister(Registers::CombinedRegister::WZ, pc_m);
+
+    PUSH_RR<Registers::CombinedRegister::WZ>();
+
+    pc_m = addressToCall;
+}
+
 uint8_t CPU::STC() {
     registers_m.setFlag(Registers::Flags::CY, 1);
 
@@ -333,13 +343,7 @@ uint8_t CPU::JNZ_a16() {
 }
 
 uint8_t CPU::CALL_a16() {
-    const auto addressToCall{ readNextTwoBytes() };
-
-    registers_m.setCombinedRegister(Registers::CombinedRegister::WZ, pc_m);
-
-    PUSH_RR<Registers::CombinedRegister::WZ>();
-
-    pc_m = addressToCall;
+    callAddress(readNextTwoBytes());
 
     return CALL_a16_Cycles;
 }
