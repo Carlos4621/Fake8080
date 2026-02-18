@@ -53,7 +53,7 @@ uint16_t CPU::readTwoBytes(uint16_t address) const {
     return static_cast<uint16_t>(rom_m[address + 1]) << Byte_Shift | rom_m[address];
 }
 
-void CPU::InvalidOpcode()
+void CPU::invalidOpcode()
 {
     throw std::runtime_error{ "The opcode isn't implemented" };
 }

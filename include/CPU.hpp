@@ -87,8 +87,9 @@ private:
     [[nodiscard]]
     uint16_t readTwoBytes(uint16_t address) const;
 
+    /// @brief Relleno para los opcodes inválidos
     [[noreturn]]
-    void InvalidOpcode();
+    void invalidOpcode();
 
     /// @brief Establece el zero flag si el valor es cero
     /// @param value Valor a evaluar
@@ -183,18 +184,38 @@ private:
     template<Registers::CombinedRegister RR, AritmeticOperation Op>
     uint8_t INX_DCX_RR();
 
+    /// @brief Superfunción para ADI, ACI, SUI, SBI y CPI con el byte inmediato
+    /// @tparam Op Operación a realizar
+    /// @tparam useCarry Considerar la flag CY para la operación
+    /// @tparam storeResult Decide si guardar el resultado en el registro A
+    /// @return Número de ciclos usados
     template<AritmeticOperation Op, bool useCarry, bool storeResult>
     uint8_t ADI_ACI_SUI_SBI_CPI_d8();
 
+    /// @brief Superfunción para ANI, ORI y XRI con el byte inmediato
+    /// @tparam Op Operación a realizar
+    /// @return Número de ciclos usaos
     template<LogicOperation Op>
     uint8_t ANI_ORI_XRI_d8();
 
+    /// @brief Superfunción para todos los saltos condicionares
+    /// @tparam FlagToVerify Flag con la que se conddiciona el salto
+    /// @tparam Negate Indica si se quiere negar la bandera (flag xor Negate)
+    /// @return Número de ciclos usados
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalJMP_a16();
 
+    /// @brief Superfunción para todas las calls condicionales
+    /// @tparam FlagToVerify Flag con la que se condiciona la call
+    /// @tparam Negate Indica si se quiere negar la bandera (flag xor Negate)
+    /// @return Número de ciclos usados
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalCall_a16();
 
+    /// @brief Superunción para todos los retornos condicionados
+    /// @tparam FlagToVerify Flag con la que se condiciona el retorno
+    /// @tparam Negate Indica si se quiere negar la bandera (flag xor Negate)
+    /// @return Número de ciclos usados
     template<Registers::Flags FlagToVerify, bool Negate>
     uint8_t conditionalRet();
 
