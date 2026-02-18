@@ -478,6 +478,19 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para tabla de opcodes
+add_executable(
+  opcode_table_test
+  test/OpcodeTableTest.cpp
+  src/CPU.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  opcode_table_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -514,3 +527,4 @@ gtest_discover_tests(sphl_test)
 gtest_discover_tests(pchl_test)
 gtest_discover_tests(conditional_call_test)
 gtest_discover_tests(conditional_ret_test)
+gtest_discover_tests(opcode_table_test)

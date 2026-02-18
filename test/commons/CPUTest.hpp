@@ -144,6 +144,10 @@ public:
     // Exponer el enum AritmeticOperation
     using CPU::AritmeticOperation;
     
+    // Exponer la tabla de opcodes
+    using CPU::opcodes_m;
+    using CPU::Opcodes_Number;
+    
     // Acceso a registros para testing
     using CPU::registers_m;
     

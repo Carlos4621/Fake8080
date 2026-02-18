@@ -53,8 +53,7 @@ uint16_t CPU::readTwoBytes(uint16_t address) const {
     return static_cast<uint16_t>(rom_m[address + 1]) << Byte_Shift | rom_m[address];
 }
 
-void CPU::invalidOpcode()
-{
+uint8_t CPU::invalidOpcode() {
     throw std::runtime_error{ "The opcode isn't implemented" };
 }
 
@@ -133,6 +132,10 @@ void CPU::callAddress(uint16_t address) {
     PUSH_RR<Registers::CombinedRegister::WZ>();
 
     pc_m = addressToCall;
+}
+
+uint8_t CPU::NOP() {
+    return NOP_Cycles;
 }
 
 uint8_t CPU::STC() {
@@ -248,6 +251,10 @@ uint8_t CPU::ADI_d8() {
 
 uint8_t CPU::ACI_d8() {
     return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::ADD, true, true>();
+}
+
+uint8_t CPU::SUI_d8() {
+    return ADI_ACI_SUI_SBI_CPI_d8<AritmeticOperation::SUB, false, true>();
 }
 
 uint8_t CPU::SBI_d8() {
