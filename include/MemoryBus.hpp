@@ -12,11 +12,17 @@ public:
     virtual ~IMemRegion() = default;
     virtual uint8_t read(uint16_t offset) const = 0;
     virtual void write(uint16_t offset, uint8_t value) = 0;
+    virtual uint16_t size() const noexcept = 0;
 };
 
 /// @brief Región de memoria desconectado
 class OpenBusRegion : public IMemRegion {
 public:
+
+    /// @brief Constructor base
+    /// @param size Tamaño del bus abierto. Por defecto 1
+    explicit OpenBusRegion(uint16_t size = 0) noexcept;
+
     /// @brief "Intenta" leer un byte de la memoria
     /// @param offset Ignorado
     /// @return Siempre 0xFF
@@ -27,6 +33,14 @@ public:
     /// @param offset Ignorado
     /// @param value Ignorado
     void write(uint16_t offset, uint8_t value) override;
+
+    /// @brief Devuelve el tamaño de la región
+    /// @return Tamaño de la región
+    uint16_t size() const noexcept override;
+
+private:
+
+    uint16_t size_m;
 };
 
 /// @brief Región de memoria modificable (RAM)
@@ -46,6 +60,10 @@ public:
     /// @param offset Dirección con offset a escribir
     /// @param value Valor a escribir
     void write(uint16_t offset, uint8_t value) override;
+
+    /// @brief Devuelve el tamaño de la región
+    /// @return Tamaño de la región
+    uint16_t size() const noexcept override;
 
 private:
     std::span<uint8_t> memory_m;
@@ -69,6 +87,10 @@ public:
     /// @param value Ignorado
     void write(uint16_t offset, uint8_t value) override;
 
+    /// @brief Devuelve el tamaño de la región
+    /// @return Tamaño de la región
+    uint16_t size() const noexcept override;
+
 private:
     std::span<const uint8_t> memory_m;
 };
@@ -82,8 +104,7 @@ public:
     /// @param start Dirección del inicio de la región
     /// @param end Dirección del final de la región
     /// @param region Región a colocar
-    /// @param regionOffset Offset en relación al inicio de la región
-    void map(uint16_t start, uint16_t end, IMemRegion& region, uint16_t regionOffset = 0);
+    void map(uint16_t start, uint16_t end, IMemRegion& region);
 
     /// @brief Lee un byte de la región redireccionada de la memoria
     /// @param address Dirección a leer
@@ -100,17 +121,16 @@ private:
     struct RegionEntry {
         uint16_t start{};
         uint16_t end{};
-        IMemRegion* region{ nullptr };
-        uint16_t base{}; // offset dentro de la región que corresponde a 'start'
+        IMemRegion& region;
     };
 
+    static OpenBusRegion Open_Bus;
+    static constexpr RegionEntry Open_Memory{0, 0, Open_Bus};
+
+    std::vector<RegionEntry> regions_m{};
+
     [[nodiscard]]
-    RegionEntry* findRegion(uint16_t address) noexcept;
-
-private:
-    static const OpenBusRegion openMemory_m;
-
-    std::vector<RegionEntry> regions_m{};  
+    RegionEntry findRegion(uint16_t address) noexcept;
 };
 
 #endif // !MEMORY_BUS_HEADER

@@ -154,51 +154,6 @@ TEST_F(MemoryBusTest, PartialRamRegionMapping) {
     EXPECT_EQ(bus.read(0x1000), 0x99);
 }
 
-// ========== Tests de MemoryBus - Mapeo con offset ==========
-
-TEST_F(MemoryBusTest, RamRegionMappingWithOffset) {
-    RamRegion ram(ramData);
-    // Mapear 0x2000-0x20FF de la dirección del bus al offset 10 de la región
-    bus.map(0x2000, 0x20FF, ram, 10);
-    
-    // bus[0x2000] -> ram[10] (valor inicial 10)
-    EXPECT_EQ(bus.read(0x2000), 10);
-    // bus[0x2001] -> ram[11] (valor inicial 11)
-    EXPECT_EQ(bus.read(0x2001), 11);
-    
-    bus.write(0x2000, 0xAB);
-    EXPECT_EQ(bus.read(0x2000), 0xAB);
-    EXPECT_EQ(ramData[10], 0xAB); // Verificar que se escribió en el offset correcto
-}
-
-TEST_F(MemoryBusTest, MultipleRegionsWithDifferentOffsets) {
-    std::array<uint8_t, 128> ram1{};
-    std::array<uint8_t, 128> ram2{};
-    
-    RamRegion region1(ram1);
-    RamRegion region2(ram2);
-    
-    // Inicializar con patrones diferentes
-    for (size_t i = 0; i < ram1.size(); ++i) {
-        ram1[i] = 0x10;
-        ram2[i] = 0x20;
-    }
-    
-    bus.map(0x0000, 0x007F, region1, 0);
-    bus.map(0x8000, 0x807F, region2, 0);
-    
-    EXPECT_EQ(bus.read(0x0000), 0x10);
-    EXPECT_EQ(bus.read(0x8000), 0x20);
-    
-    bus.write(0x0000, 0xAA);
-    bus.write(0x8000, 0xBB);
-    
-    EXPECT_EQ(bus.read(0x0000), 0xAA);
-    EXPECT_EQ(bus.read(0x8000), 0xBB);
-    EXPECT_EQ(ram1[0], 0xAA);
-    EXPECT_EQ(ram2[0], 0xBB);
-}
-
 // ========== Tests de MemoryBus - Mapeo de ROM ==========
 
 TEST_F(MemoryBusTest, RomRegionMapping) {
@@ -236,7 +191,7 @@ TEST_F(MemoryBusTest, MixedRamAndRomRegions) {
 
 // ========== Tests de MemoryBus - Mapeos superpuestos ==========
 
-TEST_F(MemoryBusTest, OverlappingRegionsLastWins) {
+TEST_F(MemoryBusTest, OverlappingRegionsFirstWins) {
     std::array<uint8_t, 128> ram1{};
     std::array<uint8_t, 128> ram2{};
     
@@ -251,14 +206,14 @@ TEST_F(MemoryBusTest, OverlappingRegionsLastWins) {
     
     // Mapear la misma dirección dos veces
     bus.map(0x0000, 0x007F, region1);
-    bus.map(0x0000, 0x007F, region2); // Último mapeo gana
+    bus.map(0x0000, 0x007F, region2); // Primer mapeo gana
     
-    EXPECT_EQ(bus.read(0x0000), 0x22); // Debe leer de region2
+    EXPECT_EQ(bus.read(0x0000), 0x11); // Debe leer de region1
     
     bus.write(0x0000, 0x99);
     EXPECT_EQ(bus.read(0x0000), 0x99);
-    EXPECT_EQ(ram2[0], 0x99); // Se escribió en region2
-    EXPECT_EQ(ram1[0], 0x11); // region1 no fue modificada
+    EXPECT_EQ(ram1[0], 0x99); // Se escribió en region1
+    EXPECT_EQ(ram2[0], 0x22); // region2 no fue modificada
 }
 
 TEST_F(MemoryBusTest, OverlappingRegionsPartialOverlap) {
@@ -282,9 +237,9 @@ TEST_F(MemoryBusTest, OverlappingRegionsPartialOverlap) {
     EXPECT_EQ(bus.read(0x0000), 0xAA);
     EXPECT_EQ(bus.read(0x001F), 0xAA);
     
-    // 0x0020-0x003F debe ir a region2 (último gana)
-    EXPECT_EQ(bus.read(0x0020), 0xBB);
-    EXPECT_EQ(bus.read(0x003F), 0xBB);
+    // 0x0020-0x003F debe ir a region1 (primer mapeo gana)
+    EXPECT_EQ(bus.read(0x0020), 0xAA);
+    EXPECT_EQ(bus.read(0x003F), 0xAA);
     
     // 0x0040-0x005F debe ir a region2
     EXPECT_EQ(bus.read(0x0040), 0xBB);
@@ -293,7 +248,7 @@ TEST_F(MemoryBusTest, OverlappingRegionsPartialOverlap) {
     // Escribir en el área superpuesta
     bus.write(0x0020, 0x55);
     EXPECT_EQ(bus.read(0x0020), 0x55);
-    EXPECT_EQ(ram2[0], 0x55); // Se escribió en region2
+    EXPECT_EQ(ram1[32], 0x55); // Se escribió en region1
 }
 
 // ========== Tests de MemoryBus - Validación de parámetros ==========
@@ -304,7 +259,8 @@ TEST_F(MemoryBusTest, MapThrowsWhenEndBeforeStart) {
 }
 
 TEST_F(MemoryBusTest, MapAllowsEqualStartEnd) {
-    RamRegion ram(ramData);
+    std::array<uint8_t, 1> singleByte{0};
+    RamRegion ram(singleByte);
     EXPECT_NO_THROW(bus.map(0x0100, 0x0100, ram));
     
     bus.write(0x0100, 0x42);
@@ -400,8 +356,8 @@ TEST_F(MemoryBusTest, MirroredRegion) {
     RamRegion ram(ramData);
     
     // Mapear la misma región RAM en dos lugares diferentes
-    bus.map(0x0000, 0x00FF, ram, 0);
-    bus.map(0x1000, 0x10FF, ram, 0);
+    bus.map(0x0000, 0x00FF, ram);
+    bus.map(0x1000, 0x10FF, ram);
     
     // Escribir en la primera dirección
     bus.write(0x0000, 0x77);
@@ -459,24 +415,6 @@ TEST_F(MemoryBusTest, WriteToOpenBusThroughBus) {
     EXPECT_EQ(bus.read(0x1234), 0xFF); // Debe seguir siendo 0xFF
 }
 
-TEST_F(MemoryBusTest, RegionOffsetCalculation) {
-    RamRegion ram(ramData);
-    
-    // Mapear 16 bytes empezando desde offset 100 de ram a dirección 0x5000
-    bus.map(0x5000, 0x500F, ram, 100);
-    
-    // bus[0x5000] -> ram[100], que tiene valor inicial 100
-    EXPECT_EQ(bus.read(0x5000), 100);
-    
-    // bus[0x5001] -> ram[101], que tiene valor inicial 101
-    EXPECT_EQ(bus.read(0x5001), 101);
-    
-    // Escribir y verificar
-    bus.write(0x5005, 0xEE);
-    EXPECT_EQ(bus.read(0x5005), 0xEE);
-    EXPECT_EQ(ramData[105], 0xEE); // Offset 100 + 5
-}
-
 TEST_F(MemoryBusTest, MultipleOverlappingLayers) {
     std::array<uint8_t, 128> ram1{}, ram2{}, ram3{};
     
@@ -493,12 +431,12 @@ TEST_F(MemoryBusTest, MultipleOverlappingLayers) {
     // Tres capas superpuestas
     bus.map(0x0000, 0x007F, region1);
     bus.map(0x0000, 0x007F, region2);
-    bus.map(0x0000, 0x007F, region3); // Último gana
+    bus.map(0x0000, 0x007F, region3); // Primer mapeo gana
     
-    EXPECT_EQ(bus.read(0x0000), 0x33);
+    EXPECT_EQ(bus.read(0x0000), 0x11);
     
     bus.write(0x0010, 0xAB);
-    EXPECT_EQ(ram3[16], 0xAB);
+    EXPECT_EQ(ram1[16], 0xAB);
     EXPECT_EQ(ram2[16], 0x22); // No modificado
-    EXPECT_EQ(ram1[16], 0x11); // No modificado
+    EXPECT_EQ(ram3[16], 0x33); // No modificado
 }
