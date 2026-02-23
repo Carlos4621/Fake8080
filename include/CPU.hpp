@@ -25,13 +25,12 @@ private:
 
     using MemberFunction = uint8_t(CPU::*)();
 
-    static constexpr uint8_t Byte_Shift{ 8 };
     static constexpr uint16_t Opcodes_Number{ 256 };
 
     static const std::array<MemberFunction, Opcodes_Number> opcodes_m;
 
     std::span<uint8_t> rom_m;
-
+    
     uint16_t pc_m{ 0 };
     Registers registers_m;
 

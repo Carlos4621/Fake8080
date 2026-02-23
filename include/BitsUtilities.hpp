@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+static constexpr uint8_t Byte_Shift{ 8 };
+
 /// @brief Obtiene el byte alto de un número de 16 bits
 /// @param value Valor de extracción
 /// @return Byte alto del valor
