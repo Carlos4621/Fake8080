@@ -110,7 +110,7 @@ public:
     /// @param address Dirección a leer
     /// @return Byte leído de la región correspondiente
     [[nodiscard]]
-    uint8_t read(uint16_t address);
+    uint8_t read(uint16_t address) const;
 
     /// @brief Escribe un byte en la región redireccionada de la memoria
     /// @param address Dirección a leer
@@ -130,7 +130,7 @@ private:
     std::vector<RegionEntry> regions_m{};
 
     [[nodiscard]]
-    RegionEntry findRegion(uint16_t address) noexcept;
+    RegionEntry findRegion(uint16_t address) const noexcept;
 };
 
 #endif // !MEMORY_BUS_HEADER

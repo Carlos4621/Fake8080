@@ -20,7 +20,7 @@ void MemoryBus::map(uint16_t start, uint16_t end, IMemRegion& region) {
     regions_m.emplace_back(start, end, region);
 }
 
-MemoryBus::RegionEntry MemoryBus::findRegion(uint16_t address) noexcept {
+MemoryBus::RegionEntry MemoryBus::findRegion(uint16_t address) const noexcept {
     for (const auto& i : regions_m) {
         if (address >= i.start && address <= i.end) {
             return i;
@@ -30,7 +30,7 @@ MemoryBus::RegionEntry MemoryBus::findRegion(uint16_t address) noexcept {
     return Open_Memory;
 }
 
-uint8_t MemoryBus::read(uint16_t address) {
+uint8_t MemoryBus::read(uint16_t address) const {
     const auto entry{ findRegion(address) };
 
     const uint16_t offset = address - entry.start;
