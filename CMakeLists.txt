@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include_directories(include)
 
 # Executable principal
-add_executable(fake8080 main.cpp src/CPU.cpp src/Fake8080.cpp src/Registers.cpp src/MemoryBus.cpp)
+add_executable(fake8080 main.cpp src/CPU.cpp src/Fake8080.cpp src/Registers.cpp src/MemoryBus.cpp src/IOBus.cpp)
 
 # Configuración de Google Test
 include(FetchContent)
@@ -503,6 +503,18 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para IOBus
+add_executable(
+  iobus_test
+  test/IOBusTest.cpp
+  src/IOBus.cpp
+)
+
+target_link_libraries(
+  iobus_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(registers_test)
 gtest_discover_tests(cpu_flags_test)
@@ -541,3 +553,4 @@ gtest_discover_tests(conditional_call_test)
 gtest_discover_tests(conditional_ret_test)
 gtest_discover_tests(opcode_table_test)
 gtest_discover_tests(memory_bus_test)
+gtest_discover_tests(iobus_test)
