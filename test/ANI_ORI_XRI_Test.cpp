@@ -26,7 +26,7 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
@@ -34,7 +34,7 @@ protected:
 
 TEST_F(ANI_ORI_XRI_Test, ANI_BasicAnd) {
     rom[0] = 0x0F; // ANI 0x0F
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -46,7 +46,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_BasicAnd) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_ZeroResult) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -59,7 +59,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_ZeroResult) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_AllOnes) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -72,7 +72,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_AllOnes) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_MaskLowNibble) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
     
@@ -83,7 +83,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_MaskLowNibble) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_MaskHighNibble) {
     rom[0] = 0xF0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
     
@@ -94,7 +94,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_MaskHighNibble) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_ClearCarry) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -106,7 +106,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_ClearCarry) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_ParityEven) {
     rom[0] = 0x03;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x03);
     
@@ -118,7 +118,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_ParityEven) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_SignFlag) {
     rom[0] = 0x80;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -132,7 +132,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_SignFlag) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_BasicOr) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xF0);
     
@@ -144,7 +144,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_BasicOr) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_ZeroWithZero) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -156,7 +156,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_ZeroWithZero) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_SetBits) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -167,7 +167,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_SetBits) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_AllOnes) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -179,7 +179,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_AllOnes) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_ClearCarry) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -191,7 +191,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_ClearCarry) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_SetLowNibble) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xA0);
     
@@ -202,7 +202,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_SetLowNibble) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_SetHighNibble) {
     rom[0] = 0xF0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x0A);
     
@@ -213,7 +213,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_SetHighNibble) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_ParityFlag) {
     rom[0] = 0x02;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     
@@ -227,7 +227,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_ParityFlag) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_BasicXor) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     
@@ -239,7 +239,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_BasicXor) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_WithZero) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
     
@@ -250,7 +250,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_WithZero) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_WithSelf) {
     rom[0] = 0xAB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
     
@@ -263,7 +263,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_WithSelf) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_ToggleBits) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xF0);
     
@@ -274,7 +274,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_ToggleBits) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_ClearCarry) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -286,7 +286,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_ClearCarry) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_InvertAllBits) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -298,7 +298,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_InvertAllBits) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_SignFlag) {
     rom[0] = 0x7F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -310,7 +310,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_SignFlag) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_ParityFlag) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x02);
     
@@ -326,7 +326,7 @@ TEST_F(ANI_ORI_XRI_Test, Sequential_PCIncrement) {
     rom[0] = 0x0F; // ANI 0x0F
     rom[1] = 0xF0; // ORI 0xF0
     rom[2] = 0xFF; // XRI 0xFF
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -346,7 +346,7 @@ TEST_F(ANI_ORI_XRI_Test, Sequential_PCIncrement) {
 TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_MaskBit) {
     // Enmascarar bit 7 para comprobar signo
     rom[0] = 0x80;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x85);
     
@@ -359,7 +359,7 @@ TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_MaskBit) {
 TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_SetFlag) {
     // Establecer bits de control
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -371,7 +371,7 @@ TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_SetFlag) {
 TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_ToggleBit) {
     // Invertir bit 0
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.XRI_d8(); // A = 0x01
@@ -382,7 +382,7 @@ TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_ToggleBit) {
 TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_ClearLowerBits) {
     // Limpiar los 4 bits inferiores
     rom[0] = 0xF0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAB);
     
@@ -395,7 +395,7 @@ TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_CombineNibbles) {
     // Combinar nibbles
     rom[0] = 0x0F; // ANI para mantener nibble bajo
     rom[1] = 0xA0; // ORI para establecer nibble alto
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x5F);
     cpu.ANI_d8(); // A = 0x0F
@@ -406,7 +406,7 @@ TEST_F(ANI_ORI_XRI_Test, RealisticUseCase_CombineNibbles) {
 
 TEST_F(ANI_ORI_XRI_Test, PreservesOtherRegisters) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setRegister(Registers::Register::B, 0xBB);
@@ -430,7 +430,7 @@ TEST_F(ANI_ORI_XRI_Test, BoundaryCondition_AllZeros) {
     rom[0] = 0x00;
     rom[1] = 0x00;
     rom[2] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -448,7 +448,7 @@ TEST_F(ANI_ORI_XRI_Test, BoundaryCondition_AllOnes) {
     rom[0] = 0xFF;
     rom[1] = 0xFF;
     rom[2] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -464,7 +464,7 @@ TEST_F(ANI_ORI_XRI_Test, BoundaryCondition_AllOnes) {
 
 TEST_F(ANI_ORI_XRI_Test, ANI_AlternatingPattern) {
     rom[0] = 0xAA;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x55);
     
@@ -476,7 +476,7 @@ TEST_F(ANI_ORI_XRI_Test, ANI_AlternatingPattern) {
 
 TEST_F(ANI_ORI_XRI_Test, ORI_AlternatingPattern) {
     rom[0] = 0xAA;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x55);
     
@@ -488,7 +488,7 @@ TEST_F(ANI_ORI_XRI_Test, ORI_AlternatingPattern) {
 
 TEST_F(ANI_ORI_XRI_Test, XRI_AlternatingPattern) {
     rom[0] = 0xAA;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x55);
     
@@ -501,7 +501,7 @@ TEST_F(ANI_ORI_XRI_Test, XRI_AlternatingPattern) {
 TEST_F(ANI_ORI_XRI_Test, Idempotence_ANI) {
     rom[0] = 0x0F;
     rom[1] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -514,7 +514,7 @@ TEST_F(ANI_ORI_XRI_Test, Idempotence_ANI) {
 TEST_F(ANI_ORI_XRI_Test, Idempotence_ORI) {
     rom[0] = 0xF0;
     rom[1] = 0xF0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -527,7 +527,7 @@ TEST_F(ANI_ORI_XRI_Test, Idempotence_ORI) {
 TEST_F(ANI_ORI_XRI_Test, Idempotence_XRI_DoubleApplication) {
     rom[0] = 0xFF;
     rom[1] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     
@@ -540,7 +540,7 @@ TEST_F(ANI_ORI_XRI_Test, Idempotence_XRI_DoubleApplication) {
 TEST_F(ANI_ORI_XRI_Test, CombinedOperations_BuildValue) {
     rom[0] = 0x00; // ANI para limpiar
     rom[1] = 0xA5; // ORI para establecer patrón
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     

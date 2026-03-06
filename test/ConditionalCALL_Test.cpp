@@ -8,7 +8,7 @@ protected:
 
     void SetUp() override {
         memory.fill(0x00);
-        cpu.setROM(memory);
+        cpu.mapMemory(memory);
         
         // Inicializar SP en una ubicación típica
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xF000);

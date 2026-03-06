@@ -25,7 +25,7 @@ void Registers::setRegister(Register reg, uint8_t value) noexcept {
 void Registers::setCombinedRegister(CombinedRegister reg, uint16_t value) noexcept {
     const auto [high, low] = RegisterPairs[std::to_underlying(reg)];
     setRegister(high, getHighByte(value));
-    setRegister(low, getLowBytes(value));
+    setRegister(low, getLowByte(value));
 }
 
 bool Registers::getFlag(Flags flag) const noexcept {

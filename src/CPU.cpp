@@ -1,15 +1,17 @@
 #include "CPU.hpp"
 
-void CPU::setROM(std::span<uint8_t> rom) {
-    rom_m = rom;
-    pc_m = 0;
+CPU::CPU(MemoryBus &memoryBus, IOBus &ioBus) noexcept
+: memoryBus_m{ memoryBus }
+, IOBus_m{ ioBus }
+{
 }
 
-void CPU::cycle() {
+void CPU::cycle()
+{
 }
 
 uint8_t CPU::readNextByte() {
-    const auto byte{ rom_m[pc_m] };
+    const auto byte{ memoryBus_m.read(pc_m) };
     ++pc_m;
     return byte;
 }
@@ -29,7 +31,7 @@ void CPU::increaseSP() {
 }
 
 uint8_t CPU::getM() {
-    return rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)];
+    return memoryBus_m.read(registers_m.getCombinedRegister(Registers::CombinedRegister::HL));
 }
 
 void CPU::loadMtoW() {
@@ -37,20 +39,20 @@ void CPU::loadMtoW() {
 }
 
 void CPU::writeWtoM() {
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = registers_m.getRegister(Registers::Register::W);
+    memoryBus_m.write(registers_m.getCombinedRegister(Registers::CombinedRegister::HL), registers_m.getRegister(Registers::Register::W));
 }
 
 void CPU::writeToM(uint8_t value) {
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)] = value;
+    memoryBus_m.write(registers_m.getCombinedRegister(Registers::CombinedRegister::HL), value);
 }
 
 void CPU::writeTwoBytes(uint16_t address, uint16_t value) {
-    rom_m[address] = getLowBytes(value);
-    rom_m[address + 1] = getHighByte(value);
+    memoryBus_m.write(address, getLowByte(value));
+    memoryBus_m.write(address + 1, getHighByte(value));
 }
 
 uint16_t CPU::readTwoBytes(uint16_t address) const {
-    return static_cast<uint16_t>(rom_m[address + 1]) << Byte_Shift | rom_m[address];
+    return static_cast<uint16_t>(memoryBus_m.read(address + 1) << Byte_Shift | memoryBus_m.read(address));
 }
 
 uint8_t CPU::invalidOpcode() {

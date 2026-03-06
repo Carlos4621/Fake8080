@@ -8,7 +8,7 @@ protected:
 
     void SetUp() override {
         memory.fill(0x00);
-        cpu.setROM(memory);
+        cpu.mapMemory(memory);
     }
     
     // Helper para inicializar SP usando LXI SP

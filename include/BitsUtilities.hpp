@@ -17,7 +17,7 @@ static constexpr uint8_t getHighByte(uint16_t value) noexcept {
 /// @param value Valor de extracción
 /// @return Byte bajo del valor
 [[nodiscard]]
-static constexpr uint8_t getLowBytes(uint16_t value) noexcept {
+static constexpr uint8_t getLowByte(uint16_t value) noexcept {
     return static_cast<uint8_t>(value);
 }
 

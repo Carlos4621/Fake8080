@@ -9,12 +9,12 @@ protected:
 
     void SetUp() override {
         rom.fill(0);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
         
         // Inicializar SP en 0xF000 usando LXI SP
         rom[0] = 0x00;  // Byte bajo de dirección para SP
         rom[1] = 0xF0;  // Byte alto de dirección para SP
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
         cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     }
 };
@@ -28,7 +28,7 @@ TEST_F(XTHL_Test, XTHL_BasicExchange) {
     // Preparar valores en el stack (SP apunta a 0xF000)
     rom[0xF000] = 0xAB;  // Byte bajo en stack
     rom[0xF001] = 0xCD;  // Byte alto en stack
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.XTHL();
     
@@ -38,8 +38,8 @@ TEST_F(XTHL_Test, XTHL_BasicExchange) {
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::L), 0xAB);
     
     // Verificar que el stack ahora tiene los valores originales de HL
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x34);  // L original
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x12);  // H original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x34);  // L original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x12);  // H original
     
     // Verificar SP no cambió
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xF000);
@@ -55,13 +55,13 @@ TEST_F(XTHL_Test, XTHL_ZeroValues) {
     // Stack con cero
     rom[0xF000] = 0x00;
     rom[0xF001] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x0000);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x00);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x00);
     EXPECT_EQ(cycles, 18);
 }
 
@@ -72,13 +72,13 @@ TEST_F(XTHL_Test, XTHL_MaxValues) {
     // Stack con valor máximo
     rom[0xF000] = 0xFF;
     rom[0xF001] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xFFFF);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0xFF);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0xFF);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0xFF);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0xFF);
     EXPECT_EQ(cycles, 18);
 }
 
@@ -88,13 +88,13 @@ TEST_F(XTHL_Test, XTHL_DifferentValues) {
     
     rom[0xF000] = 0x34;
     rom[0xF001] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x1234);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0xCD);  // L original
-    EXPECT_EQ(cpu.rom_m[0xF001], 0xAB);  // H original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0xCD);  // L original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0xAB);  // H original
     EXPECT_EQ(cycles, 18);
 }
 
@@ -107,14 +107,14 @@ TEST_F(XTHL_Test, XTHL_ByteOrderVerification) {
     
     rom[0xF000] = 0xCC;
     rom[0xF001] = 0xDD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::L), 0xCC);  // L <- (SP)
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::H), 0xDD);  // H <- (SP+1)
-    EXPECT_EQ(cpu.rom_m[0xF000], 0xBB);  // (SP) <- L original
-    EXPECT_EQ(cpu.rom_m[0xF001], 0xAA);  // (SP+1) <- H original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0xBB);  // (SP) <- L original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0xAA);  // (SP+1) <- H original
 }
 
 TEST_F(XTHL_Test, XTHL_LittleEndianCorrect) {
@@ -123,7 +123,7 @@ TEST_F(XTHL_Test, XTHL_LittleEndianCorrect) {
     
     rom[0xF000] = 0x78;
     rom[0xF001] = 0x56;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -146,7 +146,7 @@ TEST_F(XTHL_Test, XTHL_PreservesAllFlags) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1234);
     rom[0xF000] = 0xAB;
     rom[0xF001] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -162,7 +162,7 @@ TEST_F(XTHL_Test, XTHL_PreservesSP) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1234);
     rom[0xF000] = 0xAB;
     rom[0xF001] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint16_t sp_before = cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP);
     
@@ -184,7 +184,7 @@ TEST_F(XTHL_Test, XTHL_PreservesOtherRegisters) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1234);
     rom[0xF000] = 0xAB;
     rom[0xF001] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -205,7 +205,7 @@ TEST_F(XTHL_Test, XTHL_DoubleExchange_RoundTrip) {
     
     rom[0xF000] = 0xAB;
     rom[0xF001] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t original_stack_low = rom[0xF000];
     uint8_t original_stack_high = rom[0xF001];
@@ -218,46 +218,46 @@ TEST_F(XTHL_Test, XTHL_DoubleExchange_RoundTrip) {
     
     // Valores deben volver a sus posiciones originales
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), original_hl);
-    EXPECT_EQ(cpu.rom_m[0xF000], original_stack_low);
-    EXPECT_EQ(cpu.rom_m[0xF001], original_stack_high);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), original_stack_low);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), original_stack_high);
 }
 
 TEST_F(XTHL_Test, XTHL_AtLowMemory) {
     // SP en dirección baja
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0x00;
     rom[1] = 0x01;  // SP = 0x0100
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xABCD);
     rom[0x0100] = 0x12;
     rom[0x0101] = 0x34;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x3412);
-    EXPECT_EQ(cpu.rom_m[0x0100], 0xCD);
-    EXPECT_EQ(cpu.rom_m[0x0101], 0xAB);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x0100), 0xCD);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x0101), 0xAB);
 }
 
 TEST_F(XTHL_Test, XTHL_AtHighMemory) {
     // SP en dirección alta
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0xFE;
     rom[1] = 0xFF;  // SP = 0xFFFE
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1234);
     rom[0xFFFE] = 0xAB;
     rom[0xFFFF] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xCDAB);
-    EXPECT_EQ(cpu.rom_m[0xFFFE], 0x34);
-    EXPECT_EQ(cpu.rom_m[0xFFFF], 0x12);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xFFFE), 0x34);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xFFFF), 0x12);
 }
 
 // ==================== Tests de operaciones múltiples ====================
@@ -269,19 +269,19 @@ TEST_F(XTHL_Test, XTHL_MultipleSequential) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1111);
     rom[0xF000] = 0xAA;
     rom[0xF001] = 0xBB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.XTHL();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xBBAA);
     
     // Cambiar SP y hacer otra operación
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0x00;
     rom[1] = 0xE0;  // SP = 0xE000
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     
     rom[0xE000] = 0xCC;
     rom[0xE001] = 0xDD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.XTHL();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xDDCC);
 }
@@ -301,8 +301,8 @@ TEST_F(XTHL_Test, XTHL_AfterPUSH) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x1234);
     
     // El stack debería tener el valor original de HL
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x78);  // L original
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x56);  // H original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x78);  // L original
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x56);  // H original
 }
 
 TEST_F(XTHL_Test, XTHL_BeforePOP) {
@@ -311,7 +311,7 @@ TEST_F(XTHL_Test, XTHL_BeforePOP) {
     
     rom[0xF000] = 0x12;
     rom[0xF001] = 0x34;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // XTHL pone 0xABCD en el stack y carga 0x3412 en HL
     cpu.XTHL();
@@ -332,7 +332,7 @@ TEST_F(XTHL_Test, RealisticUseCase_TemporarySwap) {
     // Stack contiene otro puntero
     rom[0xF000] = 0x00;
     rom[0xF001] = 0x30;  // 0x3000
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Intercambiar
     cpu.XTHL();
@@ -341,8 +341,8 @@ TEST_F(XTHL_Test, RealisticUseCase_TemporarySwap) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x3000);
     
     // Y 0x2000 está guardado en el stack
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x00);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x20);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x20);
 }
 
 TEST_F(XTHL_Test, RealisticUseCase_StackManipulation) {
@@ -351,7 +351,7 @@ TEST_F(XTHL_Test, RealisticUseCase_StackManipulation) {
     
     rom[0xF000] = 0x11;
     rom[0xF001] = 0x22;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // XTHL para cargar valor del stack
     cpu.XTHL();
@@ -364,8 +364,8 @@ TEST_F(XTHL_Test, RealisticUseCase_StackManipulation) {
     cpu.XTHL();
     
     // El stack debe tener el nuevo valor
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x44);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x33);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x44);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x33);
 }
 
 TEST_F(XTHL_Test, RealisticUseCase_SaveReturnAddress) {
@@ -375,7 +375,7 @@ TEST_F(XTHL_Test, RealisticUseCase_SaveReturnAddress) {
     // Stack contiene dirección de retorno actual
     rom[0xF000] = 0x00;
     rom[0xF001] = 0x01;  // 0x0100
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -383,8 +383,8 @@ TEST_F(XTHL_Test, RealisticUseCase_SaveReturnAddress) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x0100);
     
     // Stack tiene la nueva dirección
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x50);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x01);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x50);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x01);
 }
 
 // ==================== Tests de patrones de bits ====================
@@ -394,13 +394,13 @@ TEST_F(XTHL_Test, PatternTest_AlternatingBits) {
     
     rom[0xF000] = 0x55;
     rom[0xF001] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x5555);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0xAA);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0xAA);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0xAA);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0xAA);
 }
 
 TEST_F(XTHL_Test, PatternTest_SingleBitSet) {
@@ -409,28 +409,28 @@ TEST_F(XTHL_Test, PatternTest_SingleBitSet) {
     
     rom[0xF000] = 0x80;
     rom[0xF001] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x0080);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x01);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x01);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x00);
 }
 
 // ==================== Tests de condiciones de frontera ====================
 
 TEST_F(XTHL_Test, BoundaryCondition_SPAtZero) {
     // SP en dirección 0
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0x00;
     rom[1] = 0x00;
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1234);
     rom[0x0000] = 0xAB;
     rom[0x0001] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -444,14 +444,14 @@ TEST_F(XTHL_Test, BoundaryCondition_ByteValues) {
     
     rom[0xF000] = 0xFF;
     rom[0xF001] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::L), 0xFF);
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::H), 0x00);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x80);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x7F);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x80);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x7F);
 }
 
 TEST_F(XTHL_Test, EdgeCase_ImmediateReuse) {
@@ -461,7 +461,7 @@ TEST_F(XTHL_Test, EdgeCase_ImmediateReuse) {
     
     rom[0xF000] = 0x56;
     rom[0xF001] = 0x78;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.XTHL();
     
@@ -477,7 +477,7 @@ TEST_F(XTHL_Test, EdgeCase_ThreeWayRotation) {
     
     rom[0xF000] = 0x33;
     rom[0xF001] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // HL <-> Stack: HL=0x3333, Stack=0x1111
     cpu.XTHL();
@@ -490,6 +490,6 @@ TEST_F(XTHL_Test, EdgeCase_ThreeWayRotation) {
     // HL <-> Stack: HL=0x1111, Stack=0x2222
     cpu.XTHL();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x1111);
-    EXPECT_EQ(cpu.rom_m[0xF000], 0x22);
-    EXPECT_EQ(cpu.rom_m[0xF001], 0x22);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF000), 0x22);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xF001), 0x22);
 }

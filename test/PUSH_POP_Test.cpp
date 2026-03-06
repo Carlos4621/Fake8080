@@ -26,13 +26,13 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
         
         // Inicializar SP en 0xF000 (área alta de memoria, típico para stack)
         // usando LXI SP, 0xF000
         rom[0] = 0x00;  // Low byte de 0xF000
         rom[1] = 0xF0;  // High byte de 0xF000
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
         cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     }
 };
@@ -49,8 +49,8 @@ TEST_F(PUSH_POP_Test, PUSH_BC_BasicOperation) {
     
     // Verificar que los datos se almacenaron en el stack (little endian en memoria de stack)
     // High byte (0x12) se almacena primero, luego low byte (0x34)
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x12);  // High byte en SP+1
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x34);  // Low byte en SP
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x12);  // High byte en SP+1
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x34);  // Low byte en SP
     
     EXPECT_EQ(cycles, 11);
 }
@@ -61,8 +61,8 @@ TEST_F(PUSH_POP_Test, PUSH_BC_ZeroValue) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::BC>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x00);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x00);
     EXPECT_EQ(cycles, 11);
 }
 
@@ -72,8 +72,8 @@ TEST_F(PUSH_POP_Test, PUSH_BC_MaxValue) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::BC>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0xFF);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xFF);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0xFF);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0xFF);
     EXPECT_EQ(cycles, 11);
 }
 
@@ -85,8 +85,8 @@ TEST_F(PUSH_POP_Test, PUSH_DE_BasicOperation) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::DE>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x56);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x78);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x56);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x78);
     EXPECT_EQ(cycles, 11);
 }
 
@@ -98,8 +98,8 @@ TEST_F(PUSH_POP_Test, PUSH_HL_BasicOperation) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::HL>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0xAB);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xCD);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0xAB);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0xCD);
     EXPECT_EQ(cycles, 11);
 }
 
@@ -113,8 +113,8 @@ TEST_F(PUSH_POP_Test, PUSH_PSW_BasicOperation) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x42);  // A (high byte)
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xD7);  // F (low byte)
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x42);  // A (high byte)
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0xD7);  // F (low byte)
     EXPECT_EQ(cycles, 11);
 }
 
@@ -130,9 +130,9 @@ TEST_F(PUSH_POP_Test, PUSH_PSW_WithFlags) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0xAB);  // Acumulador
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0xAB);  // Acumulador
     // Flags: S=1, Z=1, AC=0, P=1, CY=1, bit1=1 -> 0xC7
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xC7);  // Flags
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0xC7);  // Flags
     EXPECT_EQ(cycles, 11);
 }
 
@@ -142,8 +142,8 @@ TEST_F(PUSH_POP_Test, PUSH_PSW_ZeroValue) {
     uint8_t cycles = cpu.PUSH_RR<Registers::CombinedRegister::PSW>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFE);
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x00);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x02);  // F con bit 1 forzado a 1
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x00);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x02);  // F con bit 1 forzado a 1
     EXPECT_EQ(cycles, 11);
 }
 
@@ -153,7 +153,7 @@ TEST_F(PUSH_POP_Test, POP_BC_BasicOperation) {
     // Preparar datos en el stack
     rom[0xEFFE] = 0x34;  // Low byte
     rom[0xEFFF] = 0x12;  // High byte
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::BC>();
@@ -166,7 +166,7 @@ TEST_F(PUSH_POP_Test, POP_BC_BasicOperation) {
 TEST_F(PUSH_POP_Test, POP_BC_ZeroValue) {
     rom[0xEFFE] = 0x00;
     rom[0xEFFF] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::BC>();
@@ -179,7 +179,7 @@ TEST_F(PUSH_POP_Test, POP_BC_ZeroValue) {
 TEST_F(PUSH_POP_Test, POP_BC_MaxValue) {
     rom[0xEFFE] = 0xFF;
     rom[0xEFFF] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::BC>();
@@ -194,7 +194,7 @@ TEST_F(PUSH_POP_Test, POP_BC_MaxValue) {
 TEST_F(PUSH_POP_Test, POP_DE_BasicOperation) {
     rom[0xEFFE] = 0x78;
     rom[0xEFFF] = 0x56;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::DE>();
@@ -209,7 +209,7 @@ TEST_F(PUSH_POP_Test, POP_DE_BasicOperation) {
 TEST_F(PUSH_POP_Test, POP_HL_BasicOperation) {
     rom[0xEFFE] = 0xCD;
     rom[0xEFFF] = 0xAB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::HL>();
@@ -225,7 +225,7 @@ TEST_F(PUSH_POP_Test, POP_PSW_BasicOperation) {
     // Preparar datos en el stack: A=0x42, F=0xD7
     rom[0xEFFE] = 0xD7;  // F (low byte)
     rom[0xEFFF] = 0x42;  // A (high byte)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
@@ -241,7 +241,7 @@ TEST_F(PUSH_POP_Test, POP_PSW_RestoresFlags) {
     // F = 0xC7 = 11000111 -> S=1, Z=1, AC=0, P=1, bit1=1, CY=1
     rom[0xEFFE] = 0xC7;  // Flags
     rom[0xEFFF] = 0xAB;  // Acumulador
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
@@ -258,7 +258,7 @@ TEST_F(PUSH_POP_Test, POP_PSW_RestoresFlags) {
 TEST_F(PUSH_POP_Test, POP_PSW_ZeroValue) {
     rom[0xEFFE] = 0x00;
     rom[0xEFFF] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
@@ -273,7 +273,7 @@ TEST_F(PUSH_POP_Test, POP_PSW_ZeroValue) {
 TEST_F(PUSH_POP_Test, POP_PSW_MaxValue) {
     rom[0xEFFE] = 0xFF;
     rom[0xEFFF] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     
     uint8_t cycles = cpu.POP_RR<Registers::CombinedRegister::PSW>();
@@ -372,12 +372,12 @@ TEST_F(PUSH_POP_Test, MultiplePUSH_StackGrowsDown) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFA);
     
     // Verificar datos en stack
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x11);  // BC high
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x11);  // BC low
-    EXPECT_EQ(cpu.rom_m[0xEFFD], 0x22);  // DE high
-    EXPECT_EQ(cpu.rom_m[0xEFFC], 0x22);  // DE low
-    EXPECT_EQ(cpu.rom_m[0xEFFB], 0x33);  // HL high
-    EXPECT_EQ(cpu.rom_m[0xEFFA], 0x33);  // HL low
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x11);  // BC high
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x11);  // BC low
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFD), 0x22);  // DE high
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFC), 0x22);  // DE low
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFB), 0x33);  // HL high
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFA), 0x33);  // HL low
 }
 
 TEST_F(PUSH_POP_Test, MultiplePUSH_IncludingPSW) {
@@ -393,12 +393,12 @@ TEST_F(PUSH_POP_Test, MultiplePUSH_IncludingPSW) {
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0xEFFA);
     
     // Verificar datos en stack
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x11);  // BC high
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0x11);  // BC low
-    EXPECT_EQ(cpu.rom_m[0xEFFD], 0x22);  // HL high
-    EXPECT_EQ(cpu.rom_m[0xEFFC], 0x22);  // HL low
-    EXPECT_EQ(cpu.rom_m[0xEFFB], 0x33);  // A
-    EXPECT_EQ(cpu.rom_m[0xEFFA], 0x46);  // F (flags con bit 1=1)
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x11);  // BC high
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0x11);  // BC low
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFD), 0x22);  // HL high
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFC), 0x22);  // HL low
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFB), 0x33);  // A
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFA), 0x46);  // F (flags con bit 1=1)
 }
 
 TEST_F(PUSH_POP_Test, MultiplePOP_LIFO_Order) {
@@ -406,7 +406,7 @@ TEST_F(PUSH_POP_Test, MultiplePOP_LIFO_Order) {
     rom[0xEFFA] = 0x33; rom[0xEFFB] = 0x33;  // HL
     rom[0xEFFC] = 0x22; rom[0xEFFD] = 0x22;  // DE
     rom[0xEFFE] = 0x11; rom[0xEFFF] = 0x11;  // BC
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFA);
     
     // Pop en orden LIFO (Last In, First Out)
@@ -428,7 +428,7 @@ TEST_F(PUSH_POP_Test, MultiplePOP_IncludingPSW) {
     rom[0xEFF8] = 0x44; rom[0xEFF9] = 0x33;  // PSW (F=0x44, A=0x33)
     rom[0xEFFA] = 0x22; rom[0xEFFB] = 0x22;  // HL
     rom[0xEFFC] = 0x11; rom[0xEFFD] = 0x11;  // BC
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFF8);
     
     // Pop en orden LIFO
@@ -465,7 +465,7 @@ TEST_F(PUSH_POP_Test, PUSH_PreservesFlags) {
 TEST_F(PUSH_POP_Test, POP_PreservesFlags) {
     rom[0xEFFE] = 0x34;
     rom[0xEFFF] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
     cpu.registers_m.setFlag(Registers::Flags::S, true);
@@ -501,7 +501,7 @@ TEST_F(PUSH_POP_Test, PUSH_BC_PreservesOtherRegisters) {
 TEST_F(PUSH_POP_Test, POP_DE_PreservesOtherRegisters) {
     rom[0xEFFE] = 0x78;
     rom[0xEFFF] = 0x56;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0xEFFE);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x1234);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xABCD);
@@ -594,32 +594,32 @@ TEST_F(PUSH_POP_Test, RealisticUseCase_DataSwap) {
 
 TEST_F(PUSH_POP_Test, EdgeCase_PUSHAtLowMemory) {
     // Inicializar SP en área baja de memoria
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0x10;  // Low byte
     rom[1] = 0x00;  // High byte -> 0x0010
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0xAAAA);
     
     cpu.PUSH_RR<Registers::CombinedRegister::BC>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0x000E);
-    EXPECT_EQ(cpu.rom_m[0x000F], 0xAA);
-    EXPECT_EQ(cpu.rom_m[0x000E], 0xAA);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x000F), 0xAA);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x000E), 0xAA);
 }
 
 TEST_F(PUSH_POP_Test, EdgeCase_StackNearBoundary) {
     // SP cerca del límite de memoria
+    cpu.pc_m = 0;  // Resetear PC para leer desde el inicio
     rom[0] = 0x02;  // Low byte
     rom[1] = 0x00;  // High byte -> 0x0002
-    cpu.setROM(rom);
     cpu.LXI_RR_d16<Registers::CombinedRegister::SP>();
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0xBBBB);
     
     cpu.PUSH_RR<Registers::CombinedRegister::BC>();
     
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::SP), 0x0000);
-    EXPECT_EQ(cpu.rom_m[0x0001], 0xBB);
-    EXPECT_EQ(cpu.rom_m[0x0000], 0xBB);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x0001), 0xBB);
+    EXPECT_EQ(cpu.memoryBus_m.read(0x0000), 0xBB);
 }
 
 TEST_F(PUSH_POP_Test, EdgeCase_DeepStack) {
@@ -693,9 +693,9 @@ TEST_F(PUSH_POP_Test, ByteOrder_VerifyStackLayout) {
     
     // Verificar orden de bytes en memoria
     // BC: 0x12AB -> [0xEFFF]=0x12, [0xEFFE]=0xAB
-    EXPECT_EQ(cpu.rom_m[0xEFFF], 0x12);
-    EXPECT_EQ(cpu.rom_m[0xEFFE], 0xAB);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFF), 0x12);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFE), 0xAB);
     // DE: 0x34CD -> [0xEFFD]=0x34, [0xEFFC]=0xCD
-    EXPECT_EQ(cpu.rom_m[0xEFFD], 0x34);
-    EXPECT_EQ(cpu.rom_m[0xEFFC], 0xCD);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFD), 0x34);
+    EXPECT_EQ(cpu.memoryBus_m.read(0xEFFC), 0xCD);
 }

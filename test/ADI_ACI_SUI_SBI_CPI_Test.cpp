@@ -26,7 +26,7 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
@@ -34,7 +34,7 @@ protected:
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_BasicAddition) {
     rom[0] = 0x10; // ADI 0x10
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     
@@ -46,7 +46,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_BasicAddition) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_ZeroResult) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -59,7 +59,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_ZeroResult) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_CarryFlag) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -72,7 +72,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_CarryFlag) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_SignFlag) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x7F);
     
@@ -84,7 +84,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_SignFlag) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_AuxiliaryCarry) {
     rom[0] = 0x0F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x0F);
     
@@ -96,7 +96,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_AuxiliaryCarry) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_ParityFlag) {
     rom[0] = 0x02;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     
@@ -110,7 +110,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_ParityFlag) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_BasicAdditionNoCarry) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
@@ -123,7 +123,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_BasicAdditionNoCarry) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_BasicAdditionWithCarry) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -135,7 +135,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_BasicAdditionWithCarry) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_CarryPropagation) {
     rom[0] = 0xFE;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -150,7 +150,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_CarryPropagation) {
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_CarryFromPrevious) {
     rom[0] = 0xFF;
     rom[1] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     cpu.ADI_d8(); // A = 0x00, CY = 1
@@ -164,7 +164,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_CarryFromPrevious) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_BasicSubtraction) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     
@@ -176,7 +176,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_BasicSubtraction) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_ZeroResult) {
     rom[0] = 0x20;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     
@@ -188,7 +188,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_ZeroResult) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_BorrowFlag) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x05);
     
@@ -201,7 +201,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_BorrowFlag) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_SignFlag) {
     rom[0] = 0x7F;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -215,7 +215,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_SignFlag) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionNoBorrow) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setFlag(Registers::Flags::CY, false);
@@ -228,7 +228,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionNoBorrow) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionWithBorrow) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x30);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -240,7 +240,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BasicSubtractionWithBorrow) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BorrowPropagation) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setFlag(Registers::Flags::CY, true);
@@ -256,7 +256,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_BorrowPropagation) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Equal) {
     rom[0] = 0x20;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     
@@ -270,7 +270,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Equal) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Greater) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     
@@ -284,7 +284,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Greater) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Less) {
     rom[0] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     
@@ -298,7 +298,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_Less) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_DoesNotModifyA) {
     rom[0] = 0x50;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -315,7 +315,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, Sequential_PCIncrement) {
     rom[2] = 0x03; // SUI 0x03
     rom[3] = 0x02; // SBI 0x02
     rom[4] = 0x10; // CPI 0x10
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -340,7 +340,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, Sequential_PCIncrement) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_AddConstant) {
     rom[0] = 0x05;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     
@@ -351,7 +351,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_AddConstant) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_IncrementWithOverflow) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -363,7 +363,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_IncrementWithOverflow) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_CheckRange) {
     rom[0] = 0x0A;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x05);
     
@@ -376,7 +376,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_MultiByteAddition) {
     // Simular suma de 16 bits: 0x00FF + 0x0002 = 0x0101
     rom[0] = 0x02; // ADI para byte bajo
     rom[1] = 0x00; // ACI para byte alto (con carry)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Byte bajo
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
@@ -394,7 +394,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, RealisticUseCase_MultiByteAddition) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, BoundaryCondition_MaxValue) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -405,7 +405,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, BoundaryCondition_MaxValue) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, BoundaryCondition_MinValue) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -416,7 +416,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, BoundaryCondition_MinValue) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, PreservesOtherRegisters) {
     rom[0] = 0x10;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x20);
     cpu.registers_m.setRegister(Registers::Register::B, 0xBB);
@@ -438,7 +438,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, PreservesOtherRegisters) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_AuxiliaryCarryBoundary) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x0F);
     
@@ -449,7 +449,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ADI_AuxiliaryCarryBoundary) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_AuxiliaryCarryBoundary) {
     rom[0] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x10);
     
@@ -460,7 +460,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SUI_AuxiliaryCarryBoundary) {
 
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_WithZeroImmediate) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -473,7 +473,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, CPI_WithZeroImmediate) {
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_ChainedCarry) {
     rom[0] = 0x80;
     rom[1] = 0x80;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x80);
     cpu.ADI_d8(); // A = 0x00, CY = 1
@@ -487,7 +487,7 @@ TEST_F(ADI_ACI_SUI_SBI_CPI_Test, ACI_ChainedCarry) {
 TEST_F(ADI_ACI_SUI_SBI_CPI_Test, SBI_ChainedBorrow) {
     rom[0] = 0x01;
     rom[1] = 0x01;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.SBI_d8(); // A = 0xFF, CY = 1

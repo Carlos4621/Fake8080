@@ -10,7 +10,7 @@ protected:
     void SetUp() override {
         // Reservar memoria suficiente para las pruebas
         memory.resize(0x10000, 0x00); // 64KB de memoria
-        cpu.setROM(memory);
+        cpu.mapMemory(memory);
     }
 };
 

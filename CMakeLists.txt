@@ -41,6 +41,8 @@ add_executable(
   cpu_flags_test
   test/CPUFlagsTest.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -54,6 +56,8 @@ add_executable(
   arithmetic_operation_test
   test/ArithmeticOperationTest.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -67,6 +71,8 @@ add_executable(
   add_adc_sub_sbb_cmp_test
   test/ADD_ADC_SUB_SBB_CMP_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -80,6 +86,8 @@ add_executable(
   inr_dcr_test
   test/INR_DCR_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -93,6 +101,8 @@ add_executable(
   ana_ora_xra_test
   test/ANA_ORA_XRA_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -106,6 +116,8 @@ add_executable(
   rlc_ral_test
   test/RLC_RAL_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -119,6 +131,8 @@ add_executable(
   rrc_rar_test
   test/RRC_RAR_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -132,6 +146,8 @@ add_executable(
   stc_cma_cmc_daa_test
   test/STC_CMA_CMC_DAA_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -145,6 +161,8 @@ add_executable(
   mov_test
   test/MOV_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -158,6 +176,8 @@ add_executable(
   mvi_test
   test/MVI_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -171,6 +191,8 @@ add_executable(
   mov_m_r_test
   test/MOV_M_R_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -184,6 +206,8 @@ add_executable(
   mov_r_m_test
   test/MOV_R_M_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -197,6 +221,8 @@ add_executable(
   add_adc_sub_sbb_m_test
   test/ADD_ADC_SUB_SBB_M_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -210,6 +236,8 @@ add_executable(
   ana_ora_xra_m_test
   test/ANA_ORA_XRA_M_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -223,6 +251,8 @@ add_executable(
   inr_dcr_m_test
   test/INR_DCR_M_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -236,6 +266,8 @@ add_executable(
   inx_dcx_test
   test/INX_DCX_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -249,6 +281,8 @@ add_executable(
   dad_test
   test/DAD_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -262,6 +296,8 @@ add_executable(
   lxi_test
   test/LXI_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -275,6 +311,8 @@ add_executable(
   shld_test
   test/SHLD_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -288,6 +326,8 @@ add_executable(
   lhld_test
   test/LHLD_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -301,6 +341,8 @@ add_executable(
   adi_aci_sui_sbi_cpi_test
   test/ADI_ACI_SUI_SBI_CPI_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -314,6 +356,8 @@ add_executable(
   ani_ori_xri_test
   test/ANI_ORI_XRI_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -327,6 +371,8 @@ add_executable(
   stax_sta_test
   test/STAX_STA_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -340,6 +386,8 @@ add_executable(
   ldax_lda_test
   test/LDAX_LDA_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -353,6 +401,8 @@ add_executable(
   push_pop_test
   test/PUSH_POP_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -366,6 +416,8 @@ add_executable(
   xthl_test
   test/XTHL_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -379,6 +431,8 @@ add_executable(
   xchg_test
   test/XCHG_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -392,6 +446,8 @@ add_executable(
   jmp_test
   test/JMP_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -405,6 +461,8 @@ add_executable(
   call_ret_test
   test/CALL_RET_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -418,6 +476,8 @@ add_executable(
   rst_test
   test/RST_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -431,6 +491,8 @@ add_executable(
   sphl_test
   test/SPHL_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -444,6 +506,8 @@ add_executable(
   pchl_test
   test/PCHL_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -457,6 +521,8 @@ add_executable(
   conditional_call_test
   test/ConditionalCALL_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -470,6 +536,8 @@ add_executable(
   conditional_ret_test
   test/ConditionalRET_Test.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 
@@ -483,6 +551,8 @@ add_executable(
   opcode_table_test
   test/OpcodeTableTest.cpp
   src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
   src/Registers.cpp
 )
 

@@ -2,10 +2,39 @@
 #define CPU_TEST_HELPER_HPP
 
 #include "../../include/CPU.hpp"
+#include "../../include/MemoryBus.hpp"
+#include "../../include/IOBus.hpp"
+#include <memory>
+#include <span>
+#include <vector>
 
 // Clase helper para exponer métodos privados de CPU en tests
 class CPUTest : public CPU {
 public:
+    MemoryBus memoryBus_test;
+    IOBus ioBus_test;
+    
+    // Almacenar las regiones de memoria para tests (mantenerlas vivas)
+    std::vector<std::unique_ptr<RamRegion>> ramRegions_test;
+    
+    // Constructor que inicializa el CPU con buses de test
+    CPUTest() : CPU(memoryBus_test, ioBus_test) {}
+    
+    // Helper para establecer memoria RAM en el bus (reemplazo de setROM)
+    template<size_t N>
+    void mapMemory(std::array<uint8_t, N>& memory, uint16_t startAddr = 0) {
+        auto ramRegion = std::make_unique<RamRegion>(std::span<uint8_t>(memory.data(), memory.size()));
+        memoryBus_test.map(startAddr, startAddr + N - 1, *ramRegion);
+        ramRegions_test.push_back(std::move(ramRegion));
+    }
+    
+    // Sobrecarga para std::vector
+    void mapMemory(std::vector<uint8_t>& memory, uint16_t startAddr = 0) {
+        auto ramRegion = std::make_unique<RamRegion>(std::span<uint8_t>(memory.data(), memory.size()));
+        memoryBus_test.map(startAddr, startAddr + memory.size() - 1, *ramRegion);
+        ramRegions_test.push_back(std::move(ramRegion));
+    }
+    
     // Exponer métodos de gestión de flags
     using CPU::manageZeroFlag;
     using CPU::manageParityFlag;
@@ -151,11 +180,12 @@ public:
     // Acceso a registros para testing
     using CPU::registers_m;
     
-    // Acceso a ROM para testing
-    using CPU::rom_m;
-    
     // Acceso a PC para testing
     using CPU::pc_m;
+    
+    // Acceso a los buses para testing
+    using CPU::memoryBus_m;
+    using CPU::IOBus_m;
 };
 
 #endif // CPU_TEST_HELPER_HPP

@@ -26,14 +26,14 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
 // ==================== Tests para STAX BC ====================
 
 TEST_F(STAX_STA_Test, STAX_BC_BasicStore) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
@@ -45,7 +45,7 @@ TEST_F(STAX_STA_Test, STAX_BC_BasicStore) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_ZeroValue) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
@@ -56,7 +56,7 @@ TEST_F(STAX_STA_Test, STAX_BC_ZeroValue) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_MaxValue) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x4000);
@@ -67,7 +67,7 @@ TEST_F(STAX_STA_Test, STAX_BC_MaxValue) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_LowAddress) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x0010);
@@ -78,7 +78,7 @@ TEST_F(STAX_STA_Test, STAX_BC_LowAddress) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_HighAddress) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xBB);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0xFFFF);
@@ -91,7 +91,7 @@ TEST_F(STAX_STA_Test, STAX_BC_HighAddress) {
 // ==================== Tests para STAX DE ====================
 
 TEST_F(STAX_STA_Test, STAX_DE_BasicStore) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x33);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x5000);
@@ -103,7 +103,7 @@ TEST_F(STAX_STA_Test, STAX_DE_BasicStore) {
 }
 
 TEST_F(STAX_STA_Test, STAX_DE_DifferentAddress) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x77);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x1234);
@@ -118,7 +118,7 @@ TEST_F(STAX_STA_Test, STAX_DE_DifferentAddress) {
 TEST_F(STAX_STA_Test, STA_BasicStore) {
     rom[0] = 0x00; // Low byte de dirección
     rom[1] = 0x30; // High byte de dirección (0x3000)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x55);
     
@@ -131,7 +131,7 @@ TEST_F(STAX_STA_Test, STA_BasicStore) {
 TEST_F(STAX_STA_Test, STA_ZeroValue) {
     rom[0] = 0x00;
     rom[1] = 0x40;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     
@@ -143,7 +143,7 @@ TEST_F(STAX_STA_Test, STA_ZeroValue) {
 TEST_F(STAX_STA_Test, STA_MaxValue) {
     rom[0] = 0x00;
     rom[1] = 0x50;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
@@ -155,7 +155,7 @@ TEST_F(STAX_STA_Test, STA_MaxValue) {
 TEST_F(STAX_STA_Test, STA_LowAddress) {
     rom[0] = 0x10;
     rom[1] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xCC);
     
@@ -167,7 +167,7 @@ TEST_F(STAX_STA_Test, STA_LowAddress) {
 TEST_F(STAX_STA_Test, STA_HighAddress) {
     rom[0] = 0xFF;
     rom[1] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xDD);
     
@@ -179,7 +179,7 @@ TEST_F(STAX_STA_Test, STA_HighAddress) {
 TEST_F(STAX_STA_Test, STA_LittleEndianAddress) {
     rom[0] = 0x34;
     rom[1] = 0x12; // Dirección 0x1234
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xEE);
     
@@ -191,7 +191,7 @@ TEST_F(STAX_STA_Test, STA_LittleEndianAddress) {
 // ==================== Tests de preservación ====================
 
 TEST_F(STAX_STA_Test, STAX_PreservesAllFlags) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
@@ -214,7 +214,7 @@ TEST_F(STAX_STA_Test, STAX_PreservesAllFlags) {
 TEST_F(STAX_STA_Test, STA_PreservesAllFlags) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     
@@ -234,7 +234,7 @@ TEST_F(STAX_STA_Test, STA_PreservesAllFlags) {
 }
 
 TEST_F(STAX_STA_Test, STAX_PreservesAccumulator) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
@@ -247,7 +247,7 @@ TEST_F(STAX_STA_Test, STAX_PreservesAccumulator) {
 TEST_F(STAX_STA_Test, STA_PreservesAccumulator) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x42);
     
@@ -257,7 +257,7 @@ TEST_F(STAX_STA_Test, STA_PreservesAccumulator) {
 }
 
 TEST_F(STAX_STA_Test, STAX_PreservesOtherRegisters) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
@@ -274,7 +274,7 @@ TEST_F(STAX_STA_Test, STAX_PreservesOtherRegisters) {
 TEST_F(STAX_STA_Test, STA_PreservesOtherRegisters) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x1111);
@@ -291,7 +291,7 @@ TEST_F(STAX_STA_Test, STA_PreservesOtherRegisters) {
 // ==================== Tests de múltiples operaciones ====================
 
 TEST_F(STAX_STA_Test, STAX_BC_MultipleStores) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x11);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
@@ -311,7 +311,7 @@ TEST_F(STAX_STA_Test, STAX_BC_MultipleStores) {
 }
 
 TEST_F(STAX_STA_Test, STAX_DE_MultipleStores) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x44);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x4000);
@@ -332,7 +332,7 @@ TEST_F(STAX_STA_Test, STA_Sequential_PCIncrement) {
     rom[3] = 0x40; // STA 0x4000
     rom[4] = 0x00;
     rom[5] = 0x50; // STA 0x5000
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.STA_a16();
@@ -349,7 +349,7 @@ TEST_F(STAX_STA_Test, STA_Sequential_PCIncrement) {
 }
 
 TEST_F(STAX_STA_Test, STAX_OverwritePreviousData) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     rom[0x3000] = 0xFF;
     
@@ -364,7 +364,7 @@ TEST_F(STAX_STA_Test, STA_OverwritePreviousData) {
     rom[0] = 0x00;
     rom[1] = 0x30;
     rom[0x3000] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
     cpu.STA_a16();
@@ -375,7 +375,7 @@ TEST_F(STAX_STA_Test, STA_OverwritePreviousData) {
 // ==================== Tests de casos prácticos ====================
 
 TEST_F(STAX_STA_Test, RealisticUseCase_StoreToBuffer) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Almacenar datos en un buffer
     uint16_t bufferAddress = 0x6000;
@@ -395,7 +395,7 @@ TEST_F(STAX_STA_Test, RealisticUseCase_StoreToBuffer) {
 TEST_F(STAX_STA_Test, RealisticUseCase_SaveStatus) {
     rom[0] = 0x00;
     rom[1] = 0x80; // Dirección de estado
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01); // Estado: activo
     cpu.STA_a16();
@@ -404,7 +404,7 @@ TEST_F(STAX_STA_Test, RealisticUseCase_SaveStatus) {
 }
 
 TEST_F(STAX_STA_Test, RealisticUseCase_FillArray) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint16_t arrayStart = 0x7000;
     uint8_t fillValue = 0xAA;
@@ -422,7 +422,7 @@ TEST_F(STAX_STA_Test, RealisticUseCase_FillArray) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_DE_Comparison) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x12);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x8000);
@@ -437,7 +437,7 @@ TEST_F(STAX_STA_Test, STAX_BC_DE_Comparison) {
 }
 
 TEST_F(STAX_STA_Test, BoundaryCondition_ConsecutiveAddresses) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x01);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x9000);
@@ -456,7 +456,7 @@ TEST_F(STAX_STA_Test, BoundaryCondition_SameAddress) {
     rom[1] = 0x90;
     rom[2] = 0x00;
     rom[3] = 0x90;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.STA_a16();
@@ -468,7 +468,7 @@ TEST_F(STAX_STA_Test, BoundaryCondition_SameAddress) {
 }
 
 TEST_F(STAX_STA_Test, PatternTest_AlternatingValues) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     for (int i = 0; i < 10; i++) {
         uint8_t value = (i % 2 == 0) ? 0xAA : 0x55;
@@ -486,7 +486,7 @@ TEST_F(STAX_STA_Test, PatternTest_AlternatingValues) {
 TEST_F(STAX_STA_Test, EdgeCase_StoreAtCodeArea) {
     rom[0] = 0x06;
     rom[1] = 0x00; // STA 0x0006
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x99);
     cpu.STA_a16();
@@ -495,7 +495,7 @@ TEST_F(STAX_STA_Test, EdgeCase_StoreAtCodeArea) {
 }
 
 TEST_F(STAX_STA_Test, STAX_BC_SequentialBuffer) {
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint16_t base = 0xB000;
     uint8_t data[] = {0x10, 0x20, 0x30, 0x40, 0x50};
@@ -518,7 +518,7 @@ TEST_F(STAX_STA_Test, STA_MultipleAddresses) {
     rom[3] = 0xC0;
     rom[4] = 0x20;
     rom[5] = 0xC0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t values[] = {0x11, 0x22, 0x33};
     
@@ -535,7 +535,7 @@ TEST_F(STAX_STA_Test, STA_MultipleAddresses) {
 TEST_F(STAX_STA_Test, CompareSTAX_vs_STA) {
     rom[0] = 0x00;
     rom[1] = 0xD0;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // STAX BC
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);

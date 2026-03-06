@@ -26,7 +26,7 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
@@ -34,7 +34,7 @@ protected:
 TEST_F(LDAX_LDA_Test, LDAX_BC_BasicLoad) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
     rom[0x2000] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -46,7 +46,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_BasicLoad) {
 TEST_F(LDAX_LDA_Test, LDAX_BC_ZeroValue) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x3000);
     rom[0x3000] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -58,7 +58,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_ZeroValue) {
 TEST_F(LDAX_LDA_Test, LDAX_BC_MaxValue) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x4000);
     rom[0x4000] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -70,7 +70,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_MaxValue) {
 TEST_F(LDAX_LDA_Test, LDAX_BC_LowAddress) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x0001);
     rom[0x0001] = 0xAB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -82,7 +82,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_LowAddress) {
 TEST_F(LDAX_LDA_Test, LDAX_BC_HighAddress) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0xFFFE);
     rom[0xFFFE] = 0xCD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -95,7 +95,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_HighAddress) {
 TEST_F(LDAX_LDA_Test, LDAX_DE_BasicLoad) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x5000);
     rom[0x5000] = 0x77;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::DE>();
@@ -107,7 +107,7 @@ TEST_F(LDAX_LDA_Test, LDAX_DE_BasicLoad) {
 TEST_F(LDAX_LDA_Test, LDAX_DE_DifferentAddress) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x6789);
     rom[0x6789] = 0xEE;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDAX_RR<Registers::CombinedRegister::DE>();
@@ -121,7 +121,7 @@ TEST_F(LDAX_LDA_Test, LDA_BasicLoad) {
     rom[0x0000] = 0x00;  // Low byte of address
     rom[0x0001] = 0x30;  // High byte of address
     rom[0x3000] = 0x55;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -134,7 +134,7 @@ TEST_F(LDAX_LDA_Test, LDA_ZeroValue) {
     rom[0x0000] = 0x00;  // Low byte
     rom[0x0001] = 0x40;  // High byte
     rom[0x4000] = 0x00;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -147,7 +147,7 @@ TEST_F(LDAX_LDA_Test, LDA_MaxValue) {
     rom[0x0000] = 0x00;  // Low byte
     rom[0x0001] = 0x50;  // High byte
     rom[0x5000] = 0xFF;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -160,7 +160,7 @@ TEST_F(LDAX_LDA_Test, LDA_LowAddress) {
     rom[0x0000] = 0x10;  // Low byte
     rom[0x0001] = 0x00;  // High byte
     rom[0x0010] = 0x88;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -173,7 +173,7 @@ TEST_F(LDAX_LDA_Test, LDA_HighAddress) {
     rom[0x0000] = 0xFE;  // Low byte
     rom[0x0001] = 0xFF;  // High byte
     rom[0xFFFE] = 0x99;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -186,7 +186,7 @@ TEST_F(LDAX_LDA_Test, LDA_LittleEndianAddress) {
     rom[0x0000] = 0x34;  // Low byte
     rom[0x0001] = 0x12;  // High byte (address is 0x1234)
     rom[0x1234] = 0xAA;  // Value to load
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::A, 0x00);
 
     uint8_t cycles = cpu.LDA_a16();
@@ -199,7 +199,7 @@ TEST_F(LDAX_LDA_Test, LDA_LittleEndianAddress) {
 TEST_F(LDAX_LDA_Test, LDAX_PreservesAllFlags) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
     rom[0x2000] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
     cpu.registers_m.setFlag(Registers::Flags::S, true);
     cpu.registers_m.setFlag(Registers::Flags::P, false);
@@ -219,7 +219,7 @@ TEST_F(LDAX_LDA_Test, LDA_PreservesAllFlags) {
     rom[0x0000] = 0x00;
     rom[0x0001] = 0x30;
     rom[0x3000] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
     cpu.registers_m.setFlag(Registers::Flags::S, true);
     cpu.registers_m.setFlag(Registers::Flags::P, false);
@@ -239,7 +239,7 @@ TEST_F(LDAX_LDA_Test, LDA_PreservesAllFlags) {
 TEST_F(LDAX_LDA_Test, LDAX_PreservesPointerRegister) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
     rom[0x2000] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
 
@@ -250,7 +250,7 @@ TEST_F(LDAX_LDA_Test, LDA_PreservesOtherRegisters) {
     rom[0x0000] = 0x00;
     rom[0x0001] = 0x30;
     rom[0x3000] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setRegister(Registers::Register::B, 0x11);
     cpu.registers_m.setRegister(Registers::Register::C, 0x22);
     cpu.registers_m.setRegister(Registers::Register::D, 0x33);
@@ -273,7 +273,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_MultipleLoads) {
     rom[0x2000] = 0x11;
     rom[0x2001] = 0x22;
     rom[0x2002] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -291,7 +291,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_MultipleLoads) {
 TEST_F(LDAX_LDA_Test, LDAX_DE_MultipleLoads) {
     rom[0x3000] = 0xAA;
     rom[0x3001] = 0xBB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x3000);
     cpu.LDAX_RR<Registers::CombinedRegister::DE>();
@@ -309,7 +309,7 @@ TEST_F(LDAX_LDA_Test, LDA_Sequential_PCIncrement) {
     rom[0x0003] = 0x40;
     rom[0x3000] = 0xAA;
     rom[0x4000] = 0xBB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.LDA_a16();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xAA);
@@ -323,7 +323,7 @@ TEST_F(LDAX_LDA_Test, RealisticUseCase_LoadFromBuffer) {
     // Simular cargar datos de un buffer apuntado por BC
     rom[0x8000] = 0x48;  // 'H'
     rom[0x8001] = 0x69;  // 'i'
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x8000);
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -339,7 +339,7 @@ TEST_F(LDAX_LDA_Test, RealisticUseCase_LoadStatus) {
     rom[0x0000] = 0xFF;  // Address 0x80FF (status register)
     rom[0x0001] = 0x80;
     rom[0x80FF] = 0x03;  // Status value
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.LDA_a16();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x03);
@@ -350,7 +350,7 @@ TEST_F(LDAX_LDA_Test, RealisticUseCase_ReadArray) {
     rom[0x9000] = 0x10;
     rom[0x9001] = 0x20;
     rom[0x9002] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     for (int i = 0; i < 3; i++) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x9000 + i);
@@ -363,7 +363,7 @@ TEST_F(LDAX_LDA_Test, RealisticUseCase_ReadArray) {
 TEST_F(LDAX_LDA_Test, LDAX_BC_DE_Comparison) {
     rom[0x2000] = 0x42;
     rom[0x3000] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x2000);
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -380,7 +380,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_DE_Comparison) {
 TEST_F(LDAX_LDA_Test, BoundaryCondition_ConsecutiveAddresses) {
     rom[0x7FFE] = 0xFE;
     rom[0x7FFF] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x7FFE);
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -393,7 +393,7 @@ TEST_F(LDAX_LDA_Test, BoundaryCondition_ConsecutiveAddresses) {
 
 TEST_F(LDAX_LDA_Test, BoundaryCondition_LoadSameAddress) {
     rom[0x5000] = 0x7E;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::BC, 0x5000);
 
     cpu.LDAX_RR<Registers::CombinedRegister::BC>();
@@ -409,7 +409,7 @@ TEST_F(LDAX_LDA_Test, PatternTest_AlternatingValues) {
     rom[0x6001] = 0x55;
     rom[0x6002] = 0xAA;
     rom[0x6003] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     for (int i = 0; i < 4; i++) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::DE, 0x6000 + i);
@@ -423,7 +423,7 @@ TEST_F(LDAX_LDA_Test, EdgeCase_LoadFromCodeArea) {
     rom[0x0000] = 0x05;  // Address 0x0005 (en área de código)
     rom[0x0001] = 0x00;
     rom[0x0005] = 0xC3;  // Posible opcode (JMP)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.LDA_a16();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0xC3);
@@ -434,7 +434,7 @@ TEST_F(LDAX_LDA_Test, LDAX_BC_SequentialBuffer) {
     for (uint16_t i = 0; i < 5; i++) {
         rom[0xA000 + i] = 0x10 + i;
     }
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     uint16_t addr = 0xA000;
     for (int i = 0; i < 5; i++) {
@@ -451,7 +451,7 @@ TEST_F(LDAX_LDA_Test, LDA_MultipleAddresses) {
     rom[0x1000] = 0x11;
     rom[0x2000] = 0x22;
     rom[0x3000] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     cpu.LDA_a16();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x11);
@@ -468,7 +468,7 @@ TEST_F(LDAX_LDA_Test, CompareLDAX_vs_LDA) {
     rom[0x0000] = 0x00;
     rom[0x0001] = 0x50;
     rom[0x5000] = 0x88;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
 
     // Load usando LDA
     cpu.LDA_a16();

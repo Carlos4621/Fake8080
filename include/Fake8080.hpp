@@ -13,7 +13,6 @@ public:
 
 private:
     std::vector<uint8_t> loadedROM_m;
-    CPU cpu_m;
 
     void loadRom(std::string_view path);
 };

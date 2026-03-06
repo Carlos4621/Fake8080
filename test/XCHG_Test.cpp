@@ -9,7 +9,7 @@ protected:
 
     void SetUp() override {
         rom.fill(0);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 

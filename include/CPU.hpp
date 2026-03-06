@@ -7,6 +7,8 @@
 #include "Registers.hpp"
 #include <limits>
 #include "OpcodesCycles.hpp"
+#include "MemoryBus.hpp"
+#include "IOBus.hpp"
 
 class CPUTest;
 
@@ -14,7 +16,7 @@ class CPU {
     friend class CPUTest;
     
 public:
-    void setROM(std::span<uint8_t> rom);
+    CPU(MemoryBus& memoryBus, IOBus& ioBus) noexcept;
 
     void cycle();
 
@@ -29,10 +31,11 @@ private:
 
     static const std::array<MemberFunction, Opcodes_Number> opcodes_m;
 
-    std::span<uint8_t> rom_m;
-    
     uint16_t pc_m{ 0 };
     Registers registers_m;
+
+    MemoryBus& memoryBus_m;
+    IOBus& IOBus_m;
 
     /// @brief Lee el siguiente byte e incrementa el pc
     /// @return Byte leído
@@ -506,7 +509,7 @@ inline uint8_t CPU::MOV_M_R() {
 
 template <Registers::Register R>
 inline uint8_t CPU::MOV_R_M() {
-    registers_m.setRegister(R, rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::HL)]);
+    registers_m.setRegister(R, memoryBus_m.read(registers_m.getCombinedRegister(Registers::CombinedRegister::HL)));
 
     return MOV_R_M_Cycles;
 }
@@ -716,14 +719,14 @@ inline uint8_t CPU::conditionalRet() {
 
 template <Registers::CombinedRegister RR>
 inline uint8_t CPU::STAX_RR() {
-    rom_m[registers_m.getCombinedRegister(RR)] = registers_m.getRegister(Registers::Register::A);
+    memoryBus_m.write(registers_m.getCombinedRegister(RR), registers_m.getRegister(Registers::Register::A));
 
     return STAX_RR_Cycles;
 }
 
 template <Registers::CombinedRegister RR>
 inline uint8_t CPU::LDAX_RR() {
-    registers_m.setRegister(Registers::Register::A, rom_m[registers_m.getCombinedRegister(RR)]);
+    registers_m.setRegister(Registers::Register::A, memoryBus_m.read(registers_m.getCombinedRegister(RR)));
 
     return LDAX_RR_Cycles;
 }
@@ -734,22 +737,22 @@ inline uint8_t CPU::PUSH_RR() {
 
     decreaseSP();
 
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] = getHighByte(RR_value);
+    memoryBus_m.write(registers_m.getCombinedRegister(Registers::CombinedRegister::SP), getHighByte(RR_value));
 
     decreaseSP();
 
-    rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] = getLowBytes(RR_value);
+    memoryBus_m.write(registers_m.getCombinedRegister(Registers::CombinedRegister::SP), getLowByte(RR_value));
 
     return PUSH_RR_Cycles;
 }
 
 template <Registers::CombinedRegister RR>
 inline uint8_t CPU::POP_RR() {
-    uint8_t lowByte{ rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] };
+    const auto lowByte{ memoryBus_m.read(registers_m.getCombinedRegister(Registers::CombinedRegister::SP)) };
 
     increaseSP();
 
-    uint8_t highByte{ rom_m[registers_m.getCombinedRegister(Registers::CombinedRegister::SP)] };
+    const auto highByte{ memoryBus_m.read(registers_m.getCombinedRegister(Registers::CombinedRegister::SP)) };
 
     increaseSP();
 

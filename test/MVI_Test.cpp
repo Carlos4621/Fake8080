@@ -34,7 +34,7 @@ protected:
 TEST_F(MVI_Test, MVI_A_ImmediateValue) {
     // MVI A, 0x42
     rom[0] = 0x42; // Valor inmediato
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -44,7 +44,7 @@ TEST_F(MVI_Test, MVI_A_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_B_ImmediateValue) {
     rom[0] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::B>();
     
@@ -54,7 +54,7 @@ TEST_F(MVI_Test, MVI_B_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_C_ImmediateValue) {
     rom[0] = 0xAA;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::C>();
     
@@ -64,7 +64,7 @@ TEST_F(MVI_Test, MVI_C_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_D_ImmediateValue) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::D>();
     
@@ -74,7 +74,7 @@ TEST_F(MVI_Test, MVI_D_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_E_ImmediateValue) {
     rom[0] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::E>();
     
@@ -84,7 +84,7 @@ TEST_F(MVI_Test, MVI_E_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_H_ImmediateValue) {
     rom[0] = 0x34;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::H>();
     
@@ -94,7 +94,7 @@ TEST_F(MVI_Test, MVI_H_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_L_ImmediateValue) {
     rom[0] = 0x78;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_R_d8<Registers::Register::L>();
     
@@ -106,7 +106,7 @@ TEST_F(MVI_Test, MVI_L_ImmediateValue) {
 
 TEST_F(MVI_Test, MVI_A_ZeroValue) {
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -115,7 +115,7 @@ TEST_F(MVI_Test, MVI_A_ZeroValue) {
 
 TEST_F(MVI_Test, MVI_A_MaxValue) {
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -124,7 +124,7 @@ TEST_F(MVI_Test, MVI_A_MaxValue) {
 
 TEST_F(MVI_Test, MVI_B_PowerOfTwo) {
     rom[0] = 0b10000000; // 128
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::B>();
     
@@ -133,7 +133,7 @@ TEST_F(MVI_Test, MVI_B_PowerOfTwo) {
 
 TEST_F(MVI_Test, MVI_C_Pattern) {
     rom[0] = 0b10101010; // Patrón alternado
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::C>();
     
@@ -144,7 +144,7 @@ TEST_F(MVI_Test, MVI_C_Pattern) {
 
 TEST_F(MVI_Test, MVI_PreservesAllFlags) {
     rom[0] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
     cpu.registers_m.setFlag(Registers::Flags::S, true);
@@ -163,7 +163,7 @@ TEST_F(MVI_Test, MVI_PreservesAllFlags) {
 
 TEST_F(MVI_Test, MVI_DoesNotModifyOtherRegisters) {
     rom[0] = 0x99;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x11);
     cpu.registers_m.setRegister(Registers::Register::B, 0x22);
@@ -186,7 +186,7 @@ TEST_F(MVI_Test, MVI_DoesNotModifyOtherRegisters) {
 
 TEST_F(MVI_Test, MVI_OverwritesPreviousValue) {
     rom[0] = 0xAB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0x12);
     
@@ -204,7 +204,7 @@ TEST_F(MVI_Test, MVI_SequentialInstructions) {
     rom[0] = 0x11;
     rom[1] = 0x22;
     rom[2] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     cpu.MVI_R_d8<Registers::Register::B>();
@@ -224,7 +224,7 @@ TEST_F(MVI_Test, MVI_AllRegisters) {
     rom[4] = 0x05;
     rom[5] = 0x06;
     rom[6] = 0x07;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     cpu.MVI_R_d8<Registers::Register::B>();
@@ -248,7 +248,7 @@ TEST_F(MVI_Test, MVI_RepeatedLoads) {
     rom[0] = 0x10;
     rom[1] = 0x20;
     rom[2] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     EXPECT_EQ(cpu.registers_m.getRegister(Registers::Register::A), 0x10);
@@ -265,7 +265,7 @@ TEST_F(MVI_Test, MVI_RepeatedLoads) {
 TEST_F(MVI_Test, MVI_InitializeCounter) {
     // Patrón típico: inicializar un contador
     rom[0] = 0x00; // Contador en 0
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::B>();
     
@@ -275,7 +275,7 @@ TEST_F(MVI_Test, MVI_InitializeCounter) {
 TEST_F(MVI_Test, MVI_LoadLoopCount) {
     // Patrón típico: cargar número de iteraciones
     rom[0] = 0x0A; // 10 iteraciones
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::C>();
     
@@ -286,7 +286,7 @@ TEST_F(MVI_Test, MVI_SetupRegisterPair) {
     // Patrón típico: configurar un par de registros (HL como puntero)
     rom[0] = 0x20; // H = dirección alta
     rom[1] = 0x00; // L = dirección baja
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::H>();
     cpu.MVI_R_d8<Registers::Register::L>();
@@ -299,7 +299,7 @@ TEST_F(MVI_Test, MVI_SetupRegisterPair) {
 TEST_F(MVI_Test, MVI_LoadMask) {
     // Patrón típico: cargar una máscara de bits
     rom[0] = 0b11110000;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::B>();
     
@@ -309,7 +309,7 @@ TEST_F(MVI_Test, MVI_LoadMask) {
 TEST_F(MVI_Test, MVI_LoadASCIICharacter) {
     // Patrón típico: cargar un carácter ASCII
     rom[0] = 'A'; // 0x41
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -321,7 +321,7 @@ TEST_F(MVI_Test, MVI_InitializeMultipleCounters) {
     rom[0] = 0x08; // Contador 1
     rom[1] = 0x10; // Contador 2
     rom[2] = 0x20; // Contador 3
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::B>();
     cpu.MVI_R_d8<Registers::Register::C>();
@@ -335,7 +335,7 @@ TEST_F(MVI_Test, MVI_InitializeMultipleCounters) {
 TEST_F(MVI_Test, MVI_SetupBCDValues) {
     // Patrón típico: cargar valores BCD
     rom[0] = 0x99; // 99 en BCD
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -345,7 +345,7 @@ TEST_F(MVI_Test, MVI_SetupBCDValues) {
 TEST_F(MVI_Test, MVI_LoadPortAddress) {
     // Patrón típico: cargar dirección de puerto para I/O
     rom[0] = 0x80; // Dirección de puerto
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::C>();
     
@@ -357,7 +357,7 @@ TEST_F(MVI_Test, MVI_ClearRegisterViaZero) {
     cpu.registers_m.setRegister(Registers::Register::A, 0xFF);
     
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -367,7 +367,7 @@ TEST_F(MVI_Test, MVI_ClearRegisterViaZero) {
 TEST_F(MVI_Test, MVI_LoadNegativeNumber) {
     // Patrón típico: cargar número "negativo" (en complemento a 2)
     rom[0] = 0xFF; // -1 en complemento a 2
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::A>();
     
@@ -380,7 +380,7 @@ TEST_F(MVI_Test, MVI_InitializeDataPointers) {
     rom[1] = 0x20;
     rom[2] = 0x30; // HL = 0x3040
     rom[3] = 0x40;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_R_d8<Registers::Register::D>();
     cpu.MVI_R_d8<Registers::Register::E>();
@@ -398,7 +398,7 @@ TEST_F(MVI_Test, MVI_InitializeDataPointers) {
 TEST_F(MVI_Test, MVI_M_BasicOperation) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0x42; // Valor inmediato
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_M_d8();
     
@@ -409,7 +409,7 @@ TEST_F(MVI_Test, MVI_M_BasicOperation) {
 TEST_F(MVI_Test, MVI_M_ZeroValue) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_M_d8();
     
@@ -420,7 +420,7 @@ TEST_F(MVI_Test, MVI_M_ZeroValue) {
 TEST_F(MVI_Test, MVI_M_MaxValue) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.MVI_M_d8();
     
@@ -431,7 +431,7 @@ TEST_F(MVI_Test, MVI_M_MaxValue) {
 TEST_F(MVI_Test, MVI_M_SignedNegative) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0x80; // -128 en complemento a 2
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -441,7 +441,7 @@ TEST_F(MVI_Test, MVI_M_SignedNegative) {
 TEST_F(MVI_Test, MVI_M_BitPattern) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0b10101010;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -451,7 +451,7 @@ TEST_F(MVI_Test, MVI_M_BitPattern) {
 TEST_F(MVI_Test, MVI_M_PreservesHLRegister) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -466,7 +466,7 @@ TEST_F(MVI_Test, MVI_M_PreservesAllRegisters) {
     cpu.registers_m.setRegister(Registers::Register::D, 0x44);
     cpu.registers_m.setRegister(Registers::Register::E, 0x55);
     rom[0] = 0x99;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -480,7 +480,7 @@ TEST_F(MVI_Test, MVI_M_PreservesAllRegisters) {
 TEST_F(MVI_Test, MVI_M_PreservesAllFlags) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0] = 0x42;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
     cpu.registers_m.setFlag(Registers::Flags::S, true);
@@ -501,7 +501,7 @@ TEST_F(MVI_Test, MVI_M_OverwritesPreviousMemoryValue) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
     rom[0x2000] = 0x11; // Valor previo en memoria
     rom[0] = 0x99;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -512,7 +512,7 @@ TEST_F(MVI_Test, MVI_M_AtDifferentAddresses) {
     // Colocar dos valores en ROM[0] y ROM[1] (PC se incrementa)
     rom[0] = 0xAA;
     rom[1] = 0xBB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Primera escritura en 0x1000 (lee rom[0], PC pasa a 1)
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1000);
@@ -530,7 +530,7 @@ TEST_F(MVI_Test, MVI_M_SequentialWrites) {
     rom[0] = 0x10;
     rom[1] = 0x20;
     rom[2] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Escribir en 0x2000 (lee rom[0], PC pasa a 1)
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x2000);
@@ -551,7 +551,7 @@ TEST_F(MVI_Test, MVI_M_SequentialWrites) {
 TEST_F(MVI_Test, MVI_M_HighAddress) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xFFFF);
     rom[0] = 0x77;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -561,7 +561,7 @@ TEST_F(MVI_Test, MVI_M_HighAddress) {
 TEST_F(MVI_Test, MVI_M_LowAddress) {
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x0000);
     rom[0] = 0x88;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -577,7 +577,7 @@ TEST_F(MVI_Test, MVI_M_InitializeArrayElements) {
     for (int i = 0; i < 5; i++) {
         rom[i] = values[i];
     }
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     for (int i = 0; i < 5; i++) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, baseAddress + i);
@@ -598,7 +598,7 @@ TEST_F(MVI_Test, MVI_M_BufferInitialization) {
     for (int i = 0; i < 10; i++) {
         rom[i] = fillValue;
     }
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     for (int i = 0; i < 10; i++) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, bufferStart + i);
@@ -615,7 +615,7 @@ TEST_F(MVI_Test, MVI_M_StackAreaInitialization) {
     // Simular inicialización en área de stack
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xFFF0);
     rom[0] = 0xDD;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.MVI_M_d8();
     
@@ -631,7 +631,7 @@ TEST_F(MVI_Test, MVI_M_RealisticUseCase_LookupTable) {
     for (int i = 0; i < 5; i++) {
         rom[i] = lookupTable[i];
     }
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     for (int i = 0; i < 5; i++) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, tableAddress + i);

@@ -26,7 +26,7 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
@@ -37,7 +37,7 @@ TEST_F(SHLD_Test, SHLD_BasicStore) {
     // Dirección en little endian: 0x00, 0x30
     rom[0] = 0x00; // Low byte de dirección
     rom[1] = 0x30; // High byte de dirección
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Configurar HL = 0x1234
     cpu.registers_m.setRegister(Registers::Register::H, 0x12);
@@ -55,7 +55,7 @@ TEST_F(SHLD_Test, SHLD_BasicStore) {
 TEST_F(SHLD_Test, SHLD_ZeroValue) {
     rom[0] = 0x00;
     rom[1] = 0x20;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // HL = 0x0000
     cpu.registers_m.setRegister(Registers::Register::H, 0x00);
@@ -70,7 +70,7 @@ TEST_F(SHLD_Test, SHLD_ZeroValue) {
 TEST_F(SHLD_Test, SHLD_MaxValue) {
     rom[0] = 0x00;
     rom[1] = 0x40;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // HL = 0xFFFF
     cpu.registers_m.setRegister(Registers::Register::H, 0xFF);
@@ -86,7 +86,7 @@ TEST_F(SHLD_Test, SHLD_LittleEndianVerification) {
     // Verificar que L se almacena en dirección baja y H en dirección alta
     rom[0] = 0x00;
     rom[1] = 0x50;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0xAB);
     cpu.registers_m.setRegister(Registers::Register::L, 0xCD);
@@ -103,7 +103,7 @@ TEST_F(SHLD_Test, SHLD_LowAddress) {
     // Almacenar en dirección baja
     rom[0] = 0x10;
     rom[1] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x11);
     cpu.registers_m.setRegister(Registers::Register::L, 0x22);
@@ -118,7 +118,7 @@ TEST_F(SHLD_Test, SHLD_HighAddress) {
     // Almacenar en dirección alta
     rom[0] = 0xFE;
     rom[1] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x33);
     cpu.registers_m.setRegister(Registers::Register::L, 0x44);
@@ -132,7 +132,7 @@ TEST_F(SHLD_Test, SHLD_HighAddress) {
 TEST_F(SHLD_Test, SHLD_MiddleAddress) {
     rom[0] = 0x34;
     rom[1] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x55);
     cpu.registers_m.setRegister(Registers::Register::L, 0x66);
@@ -148,7 +148,7 @@ TEST_F(SHLD_Test, SHLD_MiddleAddress) {
 TEST_F(SHLD_Test, SHLD_PreservesAllFlags) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x12);
     cpu.registers_m.setRegister(Registers::Register::L, 0x34);
@@ -173,7 +173,7 @@ TEST_F(SHLD_Test, SHLD_PreservesAllFlags) {
 TEST_F(SHLD_Test, SHLD_PreservesHL) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x12);
     cpu.registers_m.setRegister(Registers::Register::L, 0x34);
@@ -188,7 +188,7 @@ TEST_F(SHLD_Test, SHLD_PreservesHL) {
 TEST_F(SHLD_Test, SHLD_PreservesOtherRegisters) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.registers_m.setRegister(Registers::Register::B, 0xBB);
@@ -219,7 +219,7 @@ TEST_F(SHLD_Test, SHLD_Sequential_PCIncrement) {
     // Tercera operación: SHLD 0x5000
     rom[4] = 0x00;
     rom[5] = 0x50;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Primera SHLD
     cpu.registers_m.setRegister(Registers::Register::H, 0x11);
@@ -246,7 +246,7 @@ TEST_F(SHLD_Test, SHLD_Sequential_PCIncrement) {
 TEST_F(SHLD_Test, SHLD_OverwritePreviousData) {
     rom[0] = 0x00;
     rom[1] = 0x30;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Establecer datos previos en memoria
     rom[0x3000] = 0xAA;
@@ -268,7 +268,7 @@ TEST_F(SHLD_Test, RealisticUseCase_SavePointer) {
     // Guardar un puntero para uso posterior
     rom[0] = 0x00;
     rom[1] = 0x80; // Guardar en 0x8000 (área de datos guardados)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x30);
     cpu.registers_m.setRegister(Registers::Register::L, 0x00);
@@ -283,7 +283,7 @@ TEST_F(SHLD_Test, RealisticUseCase_SaveCounter) {
     // Guardar un contador de 16 bits
     rom[0] = 0x10;
     rom[1] = 0x90;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x01);
     cpu.registers_m.setRegister(Registers::Register::L, 0x00); // Contador = 256
@@ -302,7 +302,7 @@ TEST_F(SHLD_Test, RealisticUseCase_DataTable) {
     rom[3] = 0x60;
     rom[4] = 0x04;
     rom[5] = 0x60;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Entrada 0: 0x1111
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0x1111);
@@ -330,7 +330,7 @@ TEST_F(SHLD_Test, BoundaryCondition_ConsecutiveAddresses) {
     rom[1] = 0x70;
     rom[2] = 0x02;
     rom[3] = 0x70;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Primera SHLD en 0x7000 (ocupará 0x7000 y 0x7001)
     cpu.registers_m.setRegister(Registers::Register::H, 0xAA);
@@ -351,7 +351,7 @@ TEST_F(SHLD_Test, BoundaryCondition_ConsecutiveAddresses) {
 TEST_F(SHLD_Test, BoundaryCondition_SingleByteValues) {
     rom[0] = 0x00;
     rom[1] = 0x75;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // H = 0x00, L = valor significativo
     cpu.registers_m.setRegister(Registers::Register::H, 0x00);
@@ -367,7 +367,7 @@ TEST_F(SHLD_Test, EdgeCase_AdjacentToCode) {
     // Simular almacenamiento cerca del código (después de las instrucciones)
     rom[0] = 0x06;
     rom[1] = 0x00; // Dirección 0x0006 (justo después de esta instrucción)
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0x88);
     cpu.registers_m.setRegister(Registers::Register::L, 0x99);
@@ -381,7 +381,7 @@ TEST_F(SHLD_Test, EdgeCase_AdjacentToCode) {
 TEST_F(SHLD_Test, PatternTest_AlternatingBytes) {
     rom[0] = 0x00;
     rom[1] = 0x77;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0xAA);
     cpu.registers_m.setRegister(Registers::Register::L, 0x55);
@@ -397,7 +397,7 @@ TEST_F(SHLD_Test, RepeatPattern_SameAddress) {
     rom[1] = 0x78;
     rom[2] = 0x00;
     rom[3] = 0x78;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Primera escritura
     cpu.registers_m.setRegister(Registers::Register::H, 0x11);
@@ -417,7 +417,7 @@ TEST_F(SHLD_Test, AddressCalculation_LittleEndian) {
     // Verificar que la dirección se lee correctamente en little endian
     rom[0] = 0x34;
     rom[1] = 0x12; // Dirección = 0x1234
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::H, 0xAB);
     cpu.registers_m.setRegister(Registers::Register::L, 0xCD);

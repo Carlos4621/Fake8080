@@ -26,7 +26,7 @@ protected:
         
         // Inicializar ROM con ceros
         rom.fill(0x00);
-        cpu.setROM(rom);
+        cpu.mapMemory(rom);
     }
 };
 
@@ -41,7 +41,7 @@ TEST_F(LHLD_Test, LHLD_BasicLoad) {
     // Datos en memoria: 0x1234
     rom[0x3000] = 0x34; // L
     rom[0x3001] = 0x12; // H
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     uint8_t cycles = cpu.LHLD_a16();
     
@@ -58,7 +58,7 @@ TEST_F(LHLD_Test, LHLD_ZeroValue) {
     // Datos en memoria: 0x0000
     rom[0x2000] = 0x00;
     rom[0x2001] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -72,7 +72,7 @@ TEST_F(LHLD_Test, LHLD_MaxValue) {
     // Datos en memoria: 0xFFFF
     rom[0x4000] = 0xFF;
     rom[0x4001] = 0xFF;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -86,7 +86,7 @@ TEST_F(LHLD_Test, LHLD_LittleEndianVerification) {
     
     rom[0x5000] = 0xCD; // L
     rom[0x5001] = 0xAB; // H
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -103,7 +103,7 @@ TEST_F(LHLD_Test, LHLD_LowAddress) {
     
     rom[0x0010] = 0x22;
     rom[0x0011] = 0x11;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -116,7 +116,7 @@ TEST_F(LHLD_Test, LHLD_HighAddress) {
     
     rom[0xFFFE] = 0x44;
     rom[0xFFFF] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -129,7 +129,7 @@ TEST_F(LHLD_Test, LHLD_MiddleAddress) {
     
     rom[0x1234] = 0x66;
     rom[0x1235] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -144,7 +144,7 @@ TEST_F(LHLD_Test, LHLD_PreservesAllFlags) {
     
     rom[0x3000] = 0x34;
     rom[0x3001] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Establecer todos los flags
     cpu.registers_m.setFlag(Registers::Flags::Z, true);
@@ -169,7 +169,7 @@ TEST_F(LHLD_Test, LHLD_OverwritesPreviousHL) {
     
     rom[0x3000] = 0x34;
     rom[0x3001] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Establecer HL con valor previo
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xFFFF);
@@ -186,7 +186,7 @@ TEST_F(LHLD_Test, LHLD_PreservesOtherRegisters) {
     
     rom[0x3000] = 0x34;
     rom[0x3001] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.registers_m.setRegister(Registers::Register::A, 0xAA);
     cpu.registers_m.setRegister(Registers::Register::B, 0xBB);
@@ -223,7 +223,7 @@ TEST_F(LHLD_Test, LHLD_Sequential_PCIncrement) {
     rom[0x4001] = 0x33;
     rom[0x5000] = 0x66;
     rom[0x5001] = 0x55;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x1122);
@@ -244,7 +244,7 @@ TEST_F(LHLD_Test, RealisticUseCase_LoadPointer) {
     
     rom[0x8000] = 0x00;
     rom[0x8001] = 0x30; // Puntero a 0x3000
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -258,7 +258,7 @@ TEST_F(LHLD_Test, RealisticUseCase_LoadCounter) {
     
     rom[0x9010] = 0x00;
     rom[0x9011] = 0x01; // Contador = 256
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -281,7 +281,7 @@ TEST_F(LHLD_Test, RealisticUseCase_DataTable) {
     rom[0x6003] = 0x22;
     rom[0x6004] = 0x33;
     rom[0x6005] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x1111);
@@ -299,7 +299,7 @@ TEST_F(LHLD_Test, RealisticUseCase_SHLD_LHLD_RoundTrip) {
     rom[1] = 0x70; // SHLD 0x7000
     rom[2] = 0x00;
     rom[3] = 0x70; // LHLD 0x7000
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Guardar 0xABCD con SHLD
     cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::HL, 0xABCD);
@@ -324,7 +324,7 @@ TEST_F(LHLD_Test, BoundaryCondition_ConsecutiveAddresses) {
     rom[0x7001] = 0xAA;
     rom[0x7002] = 0xDD;
     rom[0x7003] = 0xCC;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xAABB);
@@ -339,7 +339,7 @@ TEST_F(LHLD_Test, BoundaryCondition_SingleByteValues) {
     
     rom[0x7500] = 0xFF; // L
     rom[0x7501] = 0x00; // H
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -356,7 +356,7 @@ TEST_F(LHLD_Test, EdgeCase_LoadFromCodeArea) {
     // Datos "en el código"
     rom[0x0006] = 0x99;
     rom[0x0007] = 0x88;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -369,7 +369,7 @@ TEST_F(LHLD_Test, PatternTest_AlternatingBytes) {
     
     rom[0x7700] = 0x55;
     rom[0x7701] = 0xAA;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -384,7 +384,7 @@ TEST_F(LHLD_Test, RepeatPattern_SameAddress) {
     
     rom[0x7800] = 0x44;
     rom[0x7801] = 0x33;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // Primera carga
     cpu.LHLD_a16();
@@ -402,7 +402,7 @@ TEST_F(LHLD_Test, AddressCalculation_LittleEndian) {
     
     rom[0x1234] = 0xCD;
     rom[0x1235] = 0xAB;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
@@ -420,7 +420,7 @@ TEST_F(LHLD_Test, LHLD_DifferentValuesInHL) {
     rom[0x8001] = 0xFF;
     rom[0x8100] = 0x01;
     rom[0x8101] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0xFFFF);
@@ -435,7 +435,7 @@ TEST_F(LHLD_Test, LHLD_ZeroToNonZero) {
     
     rom[0x8200] = 0x34;
     rom[0x8201] = 0x12;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     // HL comienza en 0
     EXPECT_EQ(cpu.registers_m.getCombinedRegister(Registers::CombinedRegister::HL), 0x0000);
@@ -452,7 +452,7 @@ TEST_F(LHLD_Test, LHLD_WithAllBitPatterns) {
     // Patrón: todos los bits en L, ninguno en H
     rom[0x8300] = 0xFF;
     rom[0x8301] = 0x00;
-    cpu.setROM(rom);
+    cpu.mapMemory(rom);
     
     cpu.LHLD_a16();
     
