@@ -4,14 +4,14 @@
 #include <array>
 #include <cstdint>
 
-/// @brief Clase que representa un dispositivo I/O, debe ser padre de todo dispositivo que use I/O de la CPU
+/// @brief Clase que representa un dispositivo I/O, debe ser padre de todo dispositivo que use I/O de la Fake8080
 struct IOPort {
     virtual ~IOPort() noexcept = default;
     virtual uint8_t in() const noexcept = 0;
     virtual void out(uint8_t value) = 0;
 };
 
-/// @brief Bus I/O de la CPU con 256 direcciones
+/// @brief Bus I/O de la Fake8080 con 256 direcciones
 class IOBus {
 public:
     IOBus() noexcept;

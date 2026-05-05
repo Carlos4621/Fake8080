@@ -6,10 +6,20 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-include_directories(include)
+add_library(fake8080
+  src/Fake8080.cpp
+  src/Registers.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
+)
 
-# Executable principal
-add_executable(fake8080 main.cpp src/CPU.cpp src/Fake8080.cpp src/Registers.cpp src/MemoryBus.cpp src/IOBus.cpp)
+target_include_directories(fake8080 PUBLIC include)
+
+option(FAKE8080_BUILD_EXAMPLE "Build example executable" OFF)
+if(FAKE8080_BUILD_EXAMPLE)
+  add_executable(fake8080_example main.cpp)
+  target_link_libraries(fake8080_example fake8080)
+endif()
 
 # Configuración de Google Test
 # Intenta usar una instalación local primero para evitar descargas lentas en configure.
@@ -39,26 +49,23 @@ enable_testing()
 add_executable(
   registers_test
   test/RegistersTest.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   registers_test
+  fake8080
   GTest::gtest_main
 )
 
-# Test ejecutable para CPU Flags
+# Test ejecutable para Fake8080 Flags
 add_executable(
   cpu_flags_test
   test/CPUFlagsTest.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   cpu_flags_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -66,14 +73,11 @@ target_link_libraries(
 add_executable(
   arithmetic_operation_test
   test/ArithmeticOperationTest.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   arithmetic_operation_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -81,14 +85,11 @@ target_link_libraries(
 add_executable(
   add_adc_sub_sbb_cmp_test
   test/ADD_ADC_SUB_SBB_CMP_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   add_adc_sub_sbb_cmp_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -96,14 +97,11 @@ target_link_libraries(
 add_executable(
   inr_dcr_test
   test/INR_DCR_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   inr_dcr_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -111,14 +109,11 @@ target_link_libraries(
 add_executable(
   ana_ora_xra_test
   test/ANA_ORA_XRA_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   ana_ora_xra_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -126,14 +121,11 @@ target_link_libraries(
 add_executable(
   rlc_ral_test
   test/RLC_RAL_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   rlc_ral_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -141,14 +133,11 @@ target_link_libraries(
 add_executable(
   rrc_rar_test
   test/RRC_RAR_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   rrc_rar_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -156,14 +145,11 @@ target_link_libraries(
 add_executable(
   stc_cma_cmc_daa_test
   test/STC_CMA_CMC_DAA_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   stc_cma_cmc_daa_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -171,14 +157,11 @@ target_link_libraries(
 add_executable(
   mov_test
   test/MOV_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   mov_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -186,14 +169,11 @@ target_link_libraries(
 add_executable(
   mvi_test
   test/MVI_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   mvi_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -201,14 +181,11 @@ target_link_libraries(
 add_executable(
   mov_m_r_test
   test/MOV_M_R_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   mov_m_r_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -216,14 +193,11 @@ target_link_libraries(
 add_executable(
   mov_r_m_test
   test/MOV_R_M_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   mov_r_m_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -231,14 +205,11 @@ target_link_libraries(
 add_executable(
   add_adc_sub_sbb_m_test
   test/ADD_ADC_SUB_SBB_M_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   add_adc_sub_sbb_m_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -246,14 +217,11 @@ target_link_libraries(
 add_executable(
   ana_ora_xra_m_test
   test/ANA_ORA_XRA_M_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   ana_ora_xra_m_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -261,14 +229,11 @@ target_link_libraries(
 add_executable(
   inr_dcr_m_test
   test/INR_DCR_M_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   inr_dcr_m_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -276,14 +241,11 @@ target_link_libraries(
 add_executable(
   inx_dcx_test
   test/INX_DCX_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   inx_dcx_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -291,14 +253,11 @@ target_link_libraries(
 add_executable(
   dad_test
   test/DAD_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   dad_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -306,14 +265,11 @@ target_link_libraries(
 add_executable(
   lxi_test
   test/LXI_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   lxi_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -321,14 +277,11 @@ target_link_libraries(
 add_executable(
   shld_test
   test/SHLD_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   shld_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -336,14 +289,11 @@ target_link_libraries(
 add_executable(
   lhld_test
   test/LHLD_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   lhld_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -351,14 +301,11 @@ target_link_libraries(
 add_executable(
   adi_aci_sui_sbi_cpi_test
   test/ADI_ACI_SUI_SBI_CPI_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   adi_aci_sui_sbi_cpi_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -366,14 +313,11 @@ target_link_libraries(
 add_executable(
   ani_ori_xri_test
   test/ANI_ORI_XRI_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   ani_ori_xri_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -381,14 +325,11 @@ target_link_libraries(
 add_executable(
   stax_sta_test
   test/STAX_STA_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   stax_sta_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -396,14 +337,11 @@ target_link_libraries(
 add_executable(
   ldax_lda_test
   test/LDAX_LDA_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   ldax_lda_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -411,14 +349,11 @@ target_link_libraries(
 add_executable(
   push_pop_test
   test/PUSH_POP_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   push_pop_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -426,14 +361,11 @@ target_link_libraries(
 add_executable(
   xthl_test
   test/XTHL_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   xthl_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -441,14 +373,11 @@ target_link_libraries(
 add_executable(
   xchg_test
   test/XCHG_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   xchg_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -456,14 +385,11 @@ target_link_libraries(
 add_executable(
   jmp_test
   test/JMP_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   jmp_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -471,14 +397,11 @@ target_link_libraries(
 add_executable(
   call_ret_test
   test/CALL_RET_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   call_ret_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -486,14 +409,11 @@ target_link_libraries(
 add_executable(
   rst_test
   test/RST_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   rst_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -501,14 +421,11 @@ target_link_libraries(
 add_executable(
   sphl_test
   test/SPHL_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   sphl_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -516,14 +433,11 @@ target_link_libraries(
 add_executable(
   pchl_test
   test/PCHL_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   pchl_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -531,14 +445,11 @@ target_link_libraries(
 add_executable(
   conditional_call_test
   test/ConditionalCALL_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   conditional_call_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -546,14 +457,11 @@ target_link_libraries(
 add_executable(
   conditional_ret_test
   test/ConditionalRET_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   conditional_ret_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -561,14 +469,11 @@ target_link_libraries(
 add_executable(
   opcode_table_test
   test/OpcodeTableTest.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   opcode_table_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -576,14 +481,23 @@ target_link_libraries(
 add_executable(
   in_out_test
   test/IN_OUT_Test.cpp
-  src/CPU.cpp
-  src/MemoryBus.cpp
-  src/IOBus.cpp
-  src/Registers.cpp
 )
 
 target_link_libraries(
   in_out_test
+  fake8080
+  GTest::gtest_main
+)
+
+# Test ejecutable para cycle/interrupciones/HLT
+add_executable(
+  cycle_interrupt_halt_test
+  test/CycleInterruptHalt_Test.cpp
+)
+
+target_link_libraries(
+  cycle_interrupt_halt_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -591,11 +505,11 @@ target_link_libraries(
 add_executable(
   memory_bus_test
   test/MemoryBusTest.cpp
-  src/MemoryBus.cpp
 )
 
 target_link_libraries(
   memory_bus_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -603,11 +517,11 @@ target_link_libraries(
 add_executable(
   iobus_test
   test/IOBusTest.cpp
-  src/IOBus.cpp
 )
 
 target_link_libraries(
   iobus_test
+  fake8080
   GTest::gtest_main
 )
 
@@ -649,5 +563,6 @@ gtest_discover_tests(conditional_call_test)
 gtest_discover_tests(conditional_ret_test)
 gtest_discover_tests(opcode_table_test)
 gtest_discover_tests(in_out_test)
+gtest_discover_tests(cycle_interrupt_halt_test)
 gtest_discover_tests(memory_bus_test)
 gtest_discover_tests(iobus_test)

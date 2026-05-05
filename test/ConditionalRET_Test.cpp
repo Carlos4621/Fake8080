@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 
 class ConditionalRET_Test : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
     std::array<uint8_t, 0x10000> memory{};
 
     void SetUp() override {
@@ -624,15 +624,15 @@ TEST_F(ConditionalRET_Test, StressTest_ManyConditionalReturns) {
 
 TEST_F(ConditionalRET_Test, StressTest_AllConditionsAllFlags) {
     // Probar todas las combinaciones de condiciones y flags
-    std::vector<std::pair<uint8_t (CPUTest::*)(), Registers::Flags>> tests = {
-        {&CPUTest::RZ, Registers::Flags::Z},
-        {&CPUTest::RNZ, Registers::Flags::Z},
-        {&CPUTest::RC, Registers::Flags::CY},
-        {&CPUTest::RNC, Registers::Flags::CY},
-        {&CPUTest::RM, Registers::Flags::S},
-        {&CPUTest::RP, Registers::Flags::S},
-        {&CPUTest::RPE, Registers::Flags::P},
-        {&CPUTest::RPO, Registers::Flags::P}
+    std::vector<std::pair<uint8_t (Fake8080Test::*)(), Registers::Flags>> tests = {
+        {&Fake8080Test::RZ, Registers::Flags::Z},
+        {&Fake8080Test::RNZ, Registers::Flags::Z},
+        {&Fake8080Test::RC, Registers::Flags::CY},
+        {&Fake8080Test::RNC, Registers::Flags::CY},
+        {&Fake8080Test::RM, Registers::Flags::S},
+        {&Fake8080Test::RP, Registers::Flags::S},
+        {&Fake8080Test::RPE, Registers::Flags::P},
+        {&Fake8080Test::RPO, Registers::Flags::P}
     };
     
     for (size_t i = 0; i < tests.size(); ++i) {

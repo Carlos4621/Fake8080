@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 
 class ADD_ADC_SUB_SBB_CMP_Test : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
 
     void SetUp() override {
         // Inicializar todos los registros a 0

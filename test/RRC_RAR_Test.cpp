@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 
 class RRC_RAR_Test : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
 
     void SetUp() override {
         // Inicializar todos los registros a 0

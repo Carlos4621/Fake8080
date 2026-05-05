@@ -85,4 +85,6 @@ static constexpr uint8_t IN_d8_Cycles{ 10 };
 
 static constexpr uint8_t OUT_d8_Cycles{ 10 };
 
+static constexpr uint8_t HLT_Cycles{ 7 };
+
 #endif // !OPCODES_CYCLES_HEADER

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 #include <array>
 
 class MockIOPort : public IOPort {
@@ -31,7 +31,7 @@ public:
 
 class IN_OUT_Test : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
     MockIOPort device;
     std::array<uint8_t, 0x10000> rom;
 

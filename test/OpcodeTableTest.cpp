@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 #include <vector>
 
 class OpcodeTableTest : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
     std::vector<uint8_t> memory;
 
     void SetUp() override {
@@ -294,18 +294,11 @@ TEST_F(OpcodeTableTest, OpcodeTable_DCX_D_IsCorrect) {
 }
 
 TEST_F(OpcodeTableTest, OpcodeTable_AllOpcodesCanBeCalled) {
-    // Test exhaustivo: verificar que todos los opcodes (excepto invalidOpcode y HLT)
+    // Test exhaustivo: verificar que todos los opcodes
     // pueden ser llamados sin crashear el programa
     
-    std::vector<uint8_t> opcodes_that_throw = {
-        0x08, 0x10, 0x18, 0x20, 0x28, 0x30, 0x38, // NOP variantes
-        0x76, // HLT
-        0xCB, 0xD3, 0xD9, 0xDB, 0xDD, 0xED, 0xF3, 0xFB, 0xFD // Opcodes inválidos
-    };
-    
     int successful_calls = 0;
-    int expected_throws = 0;
-    
+
     for (size_t opcode = 0; opcode < 256; ++opcode) {
         // Preparar memoria con algunos datos de prueba
         for (size_t i = 0; i < 10; ++i) {
@@ -323,29 +316,14 @@ TEST_F(OpcodeTableTest, OpcodeTable_AllOpcodesCanBeCalled) {
         cpu.registers_m.setCombinedRegister(Registers::CombinedRegister::SP, 0x1000);
         cpu.pc_m = 0;
         
-        bool should_throw = std::find(opcodes_that_throw.begin(), 
-                                     opcodes_that_throw.end(), 
-                                     opcode) != opcodes_that_throw.end();
-        
-        if (should_throw) {
-            // Verificar que el opcode lanza una excepción
-            EXPECT_THROW({
-                auto opcode_func = cpu.opcodes_m[opcode];
-                (cpu.*opcode_func)();
-            }, std::runtime_error) << "Opcode 0x" << std::hex << opcode 
-                                   << " debería lanzar excepción pero no lo hizo";
-            expected_throws++;
-        } else {
-            // Verificar que el opcode puede ser llamado sin lanzar excepciones
-            EXPECT_NO_THROW({
-                auto opcode_func = cpu.opcodes_m[opcode];
-                (cpu.*opcode_func)();
-            }) << "Opcode 0x" << std::hex << opcode << " lanzó excepción inesperada";
-            successful_calls++;
-        }
+        // Verificar que el opcode puede ser llamado sin lanzar excepciones
+        EXPECT_NO_THROW({
+            auto opcode_func = cpu.opcodes_m[opcode];
+            (cpu.*opcode_func)();
+        }) << "Opcode 0x" << std::hex << opcode << " lanzó excepción inesperada";
+        successful_calls++;
     }
     
     // Verificar que se probaron todos los opcodes
-    EXPECT_EQ(successful_calls + expected_throws, 256);
-    EXPECT_GT(successful_calls, 0) << "Debe haber al menos un opcode válido";
+    EXPECT_EQ(successful_calls, 256);
 }

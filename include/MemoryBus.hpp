@@ -95,7 +95,7 @@ private:
     std::span<const uint8_t> memory_m;
 };
 
-/// @brief Bus de memoria que debe ser pre-ensamblado para su uso con el CPU
+/// @brief Bus de memoria que debe ser pre-ensamblado para su uso con el Fake8080
 class MemoryBus {
 public:
     MemoryBus() noexcept;

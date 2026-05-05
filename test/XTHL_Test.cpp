@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "commons/CPUTest.hpp"
+#include "commons/Fake8080Test.hpp"
 #include <array>
 
 class XTHL_Test : public ::testing::Test {
 protected:
-    CPUTest cpu;
+    Fake8080Test cpu;
     std::array<uint8_t, 65536> rom{};
 
     void SetUp() override {
