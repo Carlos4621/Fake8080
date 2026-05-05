@@ -3,8 +3,8 @@
 
 #include <cstdint>
 #include <span>
-#include <stdexcept>
 #include <vector>
+#include <stdexcept>
 
 /// @brief Clase padre de regiones de memoria
 class IMemRegion {
