@@ -2,13 +2,12 @@
 #define CPU_HEADER
 
 #include <cstdint>
-#include <span>
 #include <stdexcept>
 #include "Registers.hpp"
-#include <limits>
 #include "OpcodesCycles.hpp"
 #include "MemoryBus.hpp"
 #include "IOBus.hpp"
+#include "BitsUtilities.hpp"
 
 class CPUTest;
 
@@ -19,6 +18,8 @@ public:
     CPU(MemoryBus& memoryBus, IOBus& ioBus) noexcept;
 
     void cycle();
+
+    void requestInterrupt(uint8_t interruptNum);
 
 private:
     enum class AritmeticOperation : uint8_t { ADD = 0, SUB };
@@ -36,6 +37,9 @@ private:
 
     MemoryBus& memoryBus_m;
     IOBus& IOBus_m;
+
+    bool interruptsEnableRequeste_m{ false };
+    bool interruptsEnabled_m{ false };
 
     /// @brief Lee el siguiente byte e incrementa el pc
     /// @return Byte leído
@@ -414,6 +418,14 @@ private:
     template<uint8_t RstVector>
         requires (RstVector <= 7)
     uint8_t RST_N();
+
+    uint8_t EI();
+
+    uint8_t DI();
+
+    uint8_t IN_d8();
+    
+    uint8_t OUT_d8();
 };
 
 template <Registers::Register R>
@@ -780,7 +792,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::DCR_R<Registers::Register::B>,                    // 0x05: DCR B
     &CPU::MVI_R_d8<Registers::Register::B>,                 // 0x06: MVI B,d8
     &CPU::RLC_R<Registers::Register::A>,                    // 0x07: RLC
-    &CPU::invalidOpcode,                                    // 0x08: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x08: *NOP (alternativo)
     &CPU::DAD_RR<Registers::CombinedRegister::BC>,          // 0x09: DAD B
     &CPU::LDAX_RR<Registers::CombinedRegister::BC>,         // 0x0A: LDAX B
     &CPU::DCX_RR<Registers::CombinedRegister::BC>,          // 0x0B: DCX B
@@ -790,7 +802,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::RRC_R<Registers::Register::A>,                    // 0x0F: RRC
 
     // 0x10 - 0x1F
-    &CPU::invalidOpcode,                                    // 0x10: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x10: *NOP (alternativo)
     &CPU::LXI_RR_d16<Registers::CombinedRegister::DE>,      // 0x11: LXI D,d16
     &CPU::STAX_RR<Registers::CombinedRegister::DE>,         // 0x12: STAX D
     &CPU::INX_RR<Registers::CombinedRegister::DE>,          // 0x13: INX D
@@ -798,7 +810,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::DCR_R<Registers::Register::D>,                    // 0x15: DCR D
     &CPU::MVI_R_d8<Registers::Register::D>,                 // 0x16: MVI D,d8
     &CPU::RAL_R<Registers::Register::A>,                    // 0x17: RAL
-    &CPU::invalidOpcode,                                    // 0x18: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x18: *NOP (alternativo)
     &CPU::DAD_RR<Registers::CombinedRegister::DE>,          // 0x19: DAD D
     &CPU::LDAX_RR<Registers::CombinedRegister::DE>,         // 0x1A: LDAX D
     &CPU::DCX_RR<Registers::CombinedRegister::DE>,          // 0x1B: DCX D
@@ -808,7 +820,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::RAR_R<Registers::Register::A>,                    // 0x1F: RAR
 
     // 0x20 - 0x2F
-    &CPU::invalidOpcode,                                    // 0x20: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x20: *NOP (alternativo)
     &CPU::LXI_RR_d16<Registers::CombinedRegister::HL>,      // 0x21: LXI H,d16
     &CPU::SHLD_a16,                                         // 0x22: SHLD a16
     &CPU::INX_RR<Registers::CombinedRegister::HL>,          // 0x23: INX H
@@ -816,7 +828,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::DCR_R<Registers::Register::H>,                    // 0x25: DCR H
     &CPU::MVI_R_d8<Registers::Register::H>,                 // 0x26: MVI H,d8
     &CPU::DAA,                                              // 0x27: DAA
-    &CPU::invalidOpcode,                                    // 0x28: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x28: *NOP (alternativo)
     &CPU::DAD_RR<Registers::CombinedRegister::HL>,          // 0x29: DAD H
     &CPU::LHLD_a16,                                         // 0x2A: LHLD a16
     &CPU::DCX_RR<Registers::CombinedRegister::HL>,          // 0x2B: DCX H
@@ -826,7 +838,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::CMA,                                              // 0x2F: CMA
 
     // 0x30 - 0x3F
-    &CPU::invalidOpcode,                                    // 0x30: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x30: *NOP (alternativo)
     &CPU::LXI_RR_d16<Registers::CombinedRegister::SP>,      // 0x31: LXI SP,d16
     &CPU::STA_a16,                                          // 0x32: STA a16
     &CPU::INX_RR<Registers::CombinedRegister::SP>,          // 0x33: INX SP
@@ -834,7 +846,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::DCR_M,                                            // 0x35: DCR M
     &CPU::MVI_M_d8,                                         // 0x36: MVI M,d8
     &CPU::STC,                                              // 0x37: STC
-    &CPU::invalidOpcode,                                    // 0x38: *NOP (no implementado)
+    &CPU::NOP,                                              // 0x38: *NOP (alternativo)
     &CPU::DAD_RR<Registers::CombinedRegister::SP>,          // 0x39: DAD SP
     &CPU::LDA_a16,                                          // 0x3A: LDA a16
     &CPU::DCX_RR<Registers::CombinedRegister::SP>,          // 0x3B: DCX SP
@@ -904,7 +916,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::MOV_M_R<Registers::Register::E>,                          // 0x73: MOV M,E
     &CPU::MOV_M_R<Registers::Register::H>,                          // 0x74: MOV M,H
     &CPU::MOV_M_R<Registers::Register::L>,                          // 0x75: MOV M,L
-    &CPU::invalidOpcode,                                            // 0x76: HLT (no implementado)
+    &CPU::invalidOpcode,                                            // 0x76: HLT (no implementado) TODO
     &CPU::MOV_M_R<Registers::Register::A>,                          // 0x77: MOV M,A
     &CPU::MOV_R_R<Registers::Register::B, Registers::Register::A>,  // 0x78: MOV A,B
     &CPU::MOV_R_R<Registers::Register::C, Registers::Register::A>,  // 0x79: MOV A,C
@@ -999,7 +1011,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::RZ,                                               // 0xC8: RZ
     &CPU::RET,                                              // 0xC9: RET
     &CPU::JZ_a16,                                           // 0xCA: JZ a16
-    &CPU::invalidOpcode,                                    // 0xCB: *JMP (no implementado)
+    &CPU::JMP_a16,                                          // 0xCB: *JMP a16 (alternativo)
     &CPU::CZ_a16,                                           // 0xCC: CZ a16
     &CPU::CALL_a16,                                         // 0xCD: CALL a16
     &CPU::ACI_d8,                                           // 0xCE: ACI d8
@@ -1015,11 +1027,11 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::SUI_d8,                                           // 0xD6: SUI d8
     &CPU::RST_N<2>,                                         // 0xD7: RST 2
     &CPU::RC,                                               // 0xD8: RC
-    &CPU::invalidOpcode,                                    // 0xD9: *RET (no implementado)
+    &CPU::RET,                                              // 0xD9: *RET (alternativo)
     &CPU::JC_a16,                                           // 0xDA: JC a16
     &CPU::invalidOpcode,                                    // 0xDB: IN d8 (no implementado) TODO
     &CPU::CC_a16,                                           // 0xDC: CC a16
-    &CPU::invalidOpcode,                                    // 0xDD: *CALL (no implementado)
+    &CPU::CALL_a16,                                         // 0xDD: *CALL a16 (alternativo)
     &CPU::SBI_d8,                                           // 0xDE: SBI d8
     &CPU::RST_N<3>,                                         // 0xDF: RST 3
 
@@ -1037,7 +1049,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::JPE_a16,                                          // 0xEA: JPE a16
     &CPU::XCHG,                                             // 0xEB: XCHG
     &CPU::CPE_a16,                                          // 0xEC: CPE a16
-    &CPU::invalidOpcode,                                    // 0xED: *CALL (no implementado)
+    &CPU::CALL_a16,                                         // 0xED: *CALL a16 (alternativo)
     &CPU::XRI_d8,                                           // 0xEE: XRI d8
     &CPU::RST_N<5>,                                         // 0xEF: RST 5
 
@@ -1045,7 +1057,7 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::RP,                                               // 0xF0: RP
     &CPU::POP_RR<Registers::CombinedRegister::PSW>,         // 0xF1: POP PSW
     &CPU::JP_a16,                                           // 0xF2: JP a16
-    &CPU::invalidOpcode,                                    // 0xF3: DI (no implementado)
+    &CPU::DI,                                               // 0xF3: DI
     &CPU::CP_a16,                                           // 0xF4: CP a16
     &CPU::PUSH_RR<Registers::CombinedRegister::PSW>,        // 0xF5: PUSH PSW
     &CPU::ORI_d8,                                           // 0xF6: ORI d8
@@ -1053,9 +1065,9 @@ inline constexpr std::array<CPU::MemberFunction, CPU::Opcodes_Number> CPU::opcod
     &CPU::RM,                                               // 0xF8: RM
     &CPU::SPHL,                                             // 0xF9: SPHL
     &CPU::JM_a16,                                           // 0xFA: JM a16
-    &CPU::invalidOpcode,                                    // 0xFB: EI (no implementado) TODO
+    &CPU::EI,                                               // 0xFB: EI
     &CPU::CM_a16,                                           // 0xFC: CM a16
-    &CPU::invalidOpcode,                                    // 0xFD: *CALL (no implementado)
+    &CPU::CALL_a16,                                         // 0xFD: *CALL a16 (alterntivo)
     &CPU::CPI_d8,                                           // 0xFE: CPI d8
     &CPU::RST_N<7>                                          // 0xFF: RST 7
 };

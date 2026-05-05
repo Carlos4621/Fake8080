@@ -2,10 +2,8 @@
 #define FAKE_8080_HEADER
 
 #include <cstdint>
-#include <fstream>
 #include <vector>
 #include <string_view>
-#include "CPU.hpp"
 
 class Fake8080 {
 public:

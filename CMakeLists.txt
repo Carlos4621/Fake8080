@@ -12,15 +12,26 @@ include_directories(include)
 add_executable(fake8080 main.cpp src/CPU.cpp src/Fake8080.cpp src/Registers.cpp src/MemoryBus.cpp src/IOBus.cpp)
 
 # Configuración de Google Test
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG release-1.12.1
-)
-# Para Windows: Prevenir la sobrescritura de las flags de compilación del proyecto padre
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
+# Intenta usar una instalación local primero para evitar descargas lentas en configure.
+find_package(GTest QUIET)
+
+if(NOT GTest_FOUND)
+  include(FetchContent)
+  # Evita comprobaciones de actualización en cada configure y muestra progreso de descarga.
+  set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL "" FORCE)
+  set(FETCHCONTENT_QUIET OFF)
+
+  FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.12.1
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+  )
+  # Para Windows: Prevenir la sobrescritura de las flags de compilación del proyecto padre
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+  FetchContent_MakeAvailable(googletest)
+endif()
 
 enable_testing()
 
@@ -561,6 +572,21 @@ target_link_libraries(
   GTest::gtest_main
 )
 
+# Test ejecutable para IN/OUT
+add_executable(
+  in_out_test
+  test/IN_OUT_Test.cpp
+  src/CPU.cpp
+  src/MemoryBus.cpp
+  src/IOBus.cpp
+  src/Registers.cpp
+)
+
+target_link_libraries(
+  in_out_test
+  GTest::gtest_main
+)
+
 # Test ejecutable para MemoryBus
 add_executable(
   memory_bus_test
@@ -622,5 +648,6 @@ gtest_discover_tests(pchl_test)
 gtest_discover_tests(conditional_call_test)
 gtest_discover_tests(conditional_ret_test)
 gtest_discover_tests(opcode_table_test)
+gtest_discover_tests(in_out_test)
 gtest_discover_tests(memory_bus_test)
 gtest_discover_tests(iobus_test)

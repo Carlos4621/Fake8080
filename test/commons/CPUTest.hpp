@@ -156,6 +156,10 @@ public:
     using CPU::CMA;
     using CPU::CMC;
     using CPU::DAA;
+
+    // Exponer funciones de I/O
+    using CPU::IN_d8;
+    using CPU::OUT_d8;
     
     // Exponer función MOV
     using CPU::MOV_R_R;

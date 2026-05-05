@@ -440,3 +440,31 @@ uint8_t CPU::RPO() {
 uint8_t CPU::RP() {
     return conditionalRet<Registers::Flags::S, true>();
 }
+
+uint8_t CPU::EI() {
+    interruptsEnableRequeste_m = true;
+
+    return EI_DI_Cycles;
+}
+
+uint8_t CPU::DI() {
+    interruptsEnabled_m = false;
+
+    return EI_DI_Cycles;
+}
+
+uint8_t CPU::IN_d8() {
+    const auto port{ readNextByte() };
+    
+    registers_m.setRegister(Registers::Register::A, IOBus_m.in(port));
+
+    return IN_d8_Cycles;
+}
+
+uint8_t CPU::OUT_d8() {
+    const auto port{ readNextByte() };
+
+    IOBus_m.out(port, registers_m.getRegister(Registers::Register::A));
+
+    return OUT_d8_Cycles;
+}
